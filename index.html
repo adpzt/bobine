@@ -64,15 +64,15 @@ img { display: block; }
   #app .screen.plein { padding-top: 0; }
   #app .haut-plein { padding-top: 58px !important; }
   #app #tabbar { padding-bottom: 30px; }
-  #ilot { display: block; position: absolute; top: 11px; left: 50%; translate: -50% 0; width: 124px; height: 36px; border-radius: 20px; background: #000; z-index: 70; pointer-events: none; }
-  #indic { display: block; position: absolute; bottom: 8px; left: 50%; translate: -50% 0; width: 136px; height: 5px; border-radius: 3px; background: currentColor; opacity: .55; z-index: 70; pointer-events: none; color: var(--fig); }
+  #ilot { display: block; position: absolute; top: 11px; left: 50%; transform: translateX(-50%); width: 124px; height: 36px; border-radius: 20px; background: #000; z-index: 70; pointer-events: none; }
+  #indic { display: block; position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); width: 136px; height: 5px; border-radius: 3px; background: currentColor; opacity: .55; z-index: 70; pointer-events: none; color: var(--fig); }
   #barre-etat { display: flex; position: absolute; top: 0; left: 0; right: 0; height: 54px; padding: 18px 34px 0 44px; justify-content: space-between; font: 600 16px var(--f-texte); color: var(--fig); z-index: 65; pointer-events: none; }
   #app.clair #barre-etat, #app.clair #indic { color: var(--parcel); }
   #barre-etat svg { height: 13px; }
 }
-#grain { position: absolute; inset: 0; background: url(img/grain.png) repeat; background-size: 200px; opacity: .07; mix-blend-mode: multiply; pointer-events: none; z-index: 50; }
+#grain { position: absolute; top: 0; right: 0; bottom: 0; left: 0; background: url(img/grain.png) repeat; background-size: 200px; opacity: .07; mix-blend-mode: multiply; pointer-events: none; z-index: 50; }
 
-.screen { position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden; overscroll-behavior: none; background: var(--parcel); scrollbar-width: none; display: flex; flex-direction: column; }
+.screen { position: absolute; top: 0; right: 0; bottom: 0; left: 0; overflow-y: auto; overflow-x: hidden; overscroll-behavior: none; background: var(--parcel); scrollbar-width: none; display: flex; flex-direction: column; }
 .screen::-webkit-scrollbar { display: none; }
 .screen.dark { background: var(--fig); color: var(--parcel); }
 .screen.rouge { background: var(--oxblood); color: var(--parcel); }
@@ -150,7 +150,7 @@ img { display: block; }
 .plaque em { font: 500 14px var(--f-texte); font-style: normal; }
 .plaque.grand b { font-size: 34px; } .plaque.grand em { font-size: 17px; } .plaque.grand > span { padding: 6px 16px; gap: 14px; }
 
-.jauge { height: 8px; border-radius: 999px; background: rgba(41,16,12,.12); overflow: hidden; }
+.jauge { width: 100%; flex: none; align-self: stretch; height: 8px; border-radius: 999px; background: rgba(41,16,12,.12); overflow: hidden; }
 .jauge > i { display: block; height: 100%; background: var(--oxblood); border-radius: 999px; }
 .dark .jauge, .rouge .jauge, .w-prog .jauge { background: rgba(229,227,218,.18); }
 .dark .jauge > i, .w-prog .jauge > i { background: var(--chartreuse); }
@@ -175,9 +175,9 @@ img { display: block; }
 .film .cadre img { width: 100%; height: 100%; object-fit: cover; }
 
 /* Carte interactive */
-.carte-vue { position: absolute; inset: 0; background: #DCD8CC; touch-action: none; overflow: hidden; cursor: grab; -webkit-user-select: none; user-select: none; }
+.carte-vue { position: absolute; top: 0; right: 0; bottom: 0; left: 0; background: #DCD8CC; touch-action: none; overflow: hidden; cursor: grab; -webkit-user-select: none; user-select: none; }
 .carte-vue:active { cursor: grabbing; }
-.carte-vue svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; display: block; }
+.carte-vue svg { position: absolute; top: 0; right: 0; bottom: 0; left: 0; width: 100%; height: 100%; overflow: visible; display: block; }
 .m-arr { cursor: pointer; }
 #m-etiq { transition: opacity .25s; }
 .m-etiq { cursor: pointer; }
@@ -219,7 +219,7 @@ img { display: block; }
 .carte-feuille.replie { max-height: 92px; overflow: hidden; }
 .carte-feuille > * { flex-shrink: 0; }
 .carte-feuille .poignee { display: block; width: 44px; height: 5px; padding: 0; border: 0; position: relative; margin: 2px auto 2px; }
-.carte-feuille .poignee::after { content: ""; position: absolute; inset: -12px -30px; }
+.carte-feuille .poignee::after { content: ""; position: absolute; top: -12px; right: -30px; bottom: -12px; left: -30px; }
 .legende { display: flex; gap: 14px; flex-wrap: wrap; }
 .legende span { display: inline-flex; gap: 6px; align-items: center; }
 .legende i { width: 12px; height: 12px; border: 1px solid var(--fig); border-radius: 2px; }
@@ -250,8 +250,8 @@ img { display: block; }
 .ico-rond svg { width: 18px; height: 18px; }
 
 /* Scan */
-.scan-fond { position: absolute; inset: 0; background-size: cover; background-position: center; }
-.scan-voile { position: absolute; inset: 0 0 auto; height: 180px; background: linear-gradient(rgba(41,16,12,.75), transparent); }
+.scan-fond { position: absolute; top: 0; right: 0; bottom: 0; left: 0; background-size: cover; background-position: center; }
+.scan-voile { position: absolute; top: 0; right: 0; bottom: auto; left: 0; height: 180px; background: linear-gradient(rgba(41,16,12,.75), transparent); }
 .viseur { position: absolute; left: 19%; right: 19%; top: 34%; height: 30%; transition: .4s; }
 .viseur i { position: absolute; width: 40px; height: 40px; border: 5px solid var(--parcel); transition: border-color .3s; }
 .viseur i:nth-child(1) { top: 0; left: 0; border-right: 0; border-bottom: 0; }
@@ -287,7 +287,7 @@ img { display: block; }
 
 /* Cassette débloquée */
 .scene { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 18px 20px 8px; }
-.scene .halo-c { position: absolute; width: 330px; height: 330px; border-radius: 50%; top: 50%; left: 50%; translate: -50% -62%; background: radial-gradient(circle, rgba(229,227,218,.10) 0 60%, transparent 61%); }
+.scene .halo-c { position: absolute; width: 330px; height: 330px; border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -62%); background: radial-gradient(circle, rgba(229,227,218,.10) 0 60%, transparent 61%); }
 .revele .arr-bloc { animation: monte .5s ease-out .5s both; }
 @keyframes monte { from { opacity: 0; transform: translateY(12px); } }
 .affiche { width: 236px; aspect-ratio: 4 / 5; border-radius: 8px; overflow: hidden; border: 1px solid rgba(229,227,218,.4); position: relative; background: #000; }
@@ -302,11 +302,11 @@ img { display: block; }
 .paysage { position: absolute; top: 0; left: 0; transform-origin: 0 0; overflow: hidden; background: #000; color: var(--parcel); }
 .paysage.tourne { transform: translateX(var(--W)) rotate(90deg); width: var(--H); height: var(--W); }
 .paysage.droit { width: 100%; height: 100%; }
-.cam-fond, .cam-calque { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.grille { position: absolute; inset: 0; background:
+.cam-fond, .cam-calque { position: absolute; top: 0; right: 0; bottom: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+.grille { position: absolute; top: 0; right: 0; bottom: 0; left: 0; background:
   linear-gradient(to right, transparent calc(33.33% - .5px), rgba(229,227,218,.35) 0 calc(33.33% + .5px), transparent 0 calc(66.66% - .5px), rgba(229,227,218,.35) 0 calc(66.66% + .5px), transparent 0),
   linear-gradient(to bottom, transparent calc(33.33% - .5px), rgba(229,227,218,.35) 0 calc(33.33% + .5px), transparent 0 calc(66.66% - .5px), rgba(229,227,218,.35) 0 calc(66.66% + .5px), transparent 0); }
-.cam-ui { position: absolute; inset: 0; display: flex; justify-content: space-between; padding: 20px 20px 20px 32px; }
+.cam-ui { position: absolute; top: 0; right: 0; bottom: 0; left: 0; display: flex; justify-content: space-between; padding: 20px 20px 20px 32px; }
 .cam-ui .col { display: flex; flex-direction: column; justify-content: space-between; align-items: center; }
 .declencheur { width: 76px; height: 76px; border-radius: 50%; border: 3px solid var(--parcel); display: grid; place-items: center; }
 .declencheur span { width: 60px; height: 60px; border-radius: 50%; background: var(--oxblood); border: 1.5px solid var(--chartreuse); }
@@ -357,7 +357,7 @@ img { display: block; }
 
 /* Fiche film */
 .hero { position: relative; padding-bottom: 32px; overflow: hidden; }
-.hero .flou { position: absolute; inset: -40px; background-size: cover; background-position: center; filter: blur(28px) brightness(.55); }
+.hero .flou { position: absolute; top: -40px; right: -40px; bottom: -40px; left: -40px; background-size: cover; background-position: center; filter: blur(28px) brightness(.55); }
 .panneau { background: var(--parcel); border-radius: 24px 24px 0 0; border-top: 1px solid var(--fig); margin-top: -24px; position: relative; padding: 24px 20px 40px; display: flex; flex-direction: column; gap: 32px; }
 .stamp { border: 1.5px solid var(--oxblood); color: var(--oxblood); border-radius: 6px; padding: 4px 10px; text-align: center; transform: rotate(-6deg); flex: none; }
 .stamp small { font: 600 12px var(--f-texte); display: block; }
@@ -389,6 +389,11 @@ img { display: block; }
 .defile > .rang-int { display: flex; gap: 12px; padding: 0 20px; }
 .entete-sec { display: flex; justify-content: space-between; align-items: baseline; }
 
+@supports not (aspect-ratio: 1 / 1) {
+  .affiche { height: 295px; } #s-fiche .affiche { height: 275px; }
+  .photogramme .bande img, .photogramme .bande .manque { height: 72px; }
+  .bob-carte .imgs img { height: 90px; }
+}
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
 </style>
 
@@ -567,7 +572,7 @@ E.accueil = () => `<section class="screen" id="s-accueil" data-nav="accueil">
   <div class="defile"><div class="rang-int">
     ${[['img/couv-1.jpg', 'Lupin', 'Place Vendôme, 1er'], ['img/affiche-emily.jpg', 'Emily in Paris', "Pl. de l'Estrapade, 5e", 'fiche'], ['img/couv-2.jpg', 'Dix pour cent', 'Rue de Furstemberg, 6e'], ['img/couv-3.jpg', 'John Wick 4', 'Sacré-Cœur, 18e'], [null, '?', 'Port de la Tournelle, 5e']].map(([src, t, l, go]) => `
       <button style="width:114px;flex:none;text-align:left;display:flex;flex-direction:column;gap:6px" ${go ? `data-go="${go}"` : 'data-toast="Ouvre la fiche Emily in Paris pour voir une fiche film complète."'}>
-        ${src ? `<img src="${src}" alt="" style="width:114px;aspect-ratio:4/5;object-fit:cover;border-radius:8px;border:1px solid var(--fig)">` : `<span style="width:114px;aspect-ratio:4/5;border-radius:8px;border:1px solid var(--fig);background:var(--capers);display:grid;place-items:center;color:var(--chartreuse);font:400 34px var(--f-titre)">?</span>`}
+        ${src ? `<img src="${src}" alt="" style="width:114px;height:142px;aspect-ratio:4/5;object-fit:cover;border-radius:8px;border:1px solid var(--fig)">` : `<span style="width:114px;aspect-ratio:4/5;border-radius:8px;border:1px solid var(--fig);background:var(--capers);display:grid;place-items:center;color:var(--chartreuse);font:400 34px var(--f-titre)">?</span>`}
         <span style="font:600 15px var(--f-texte)">${src ? t : 'À débloquer'}</span><span class="mini doux" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${l}</span></button>`).join('')}
   </div></div>
   <div class="pad" style="padding-top:40px;padding-bottom:12px">${parcoursTicket('parcours')}</div></section>`;
@@ -652,8 +657,8 @@ E.cassette = () => `<section class="screen dark" id="s-cassette">
 /* --- Caméra et aperçu (faux paysage) --- */
 E.camera = () => `<section class="screen dark" id="s-camera" style="overflow:hidden"><div class="paysage" id="cam-vue">
   <img class="cam-fond" src="img/vue-camera.jpg" alt=""><img class="cam-calque" id="cam-calque" src="img/scene-emily.jpg" alt="" style="opacity:.5"><div class="grille"></div>
-  <div style="position:absolute;inset:0 0 auto;height:110px;background:linear-gradient(rgba(41,16,12,.8),transparent)"></div>
-  <div style="position:absolute;inset:0 0 0 auto;width:200px;background:linear-gradient(to left,rgba(41,16,12,.8),transparent)"></div>
+  <div style="position:absolute;top: 0; right: 0; bottom: auto; left: 0;height:110px;background:linear-gradient(rgba(41,16,12,.8),transparent)"></div>
+  <div style="position:absolute;top: 0; right: 0; bottom: 0; left: auto;width:200px;background:linear-gradient(to left,rgba(41,16,12,.8),transparent)"></div>
   <div class="cam-ui"><div style="flex:1;display:flex;justify-content:space-between;align-items:flex-start;padding-right:24px">${fermerRetour()}
       <div class="ressemblance"><div><span>Ressemblance</span><b class="num" id="cam-score">74 %</b></div><div class="jauge" style="height:4px;background:rgba(41,16,12,.15)"><i id="cam-jauge" style="width:74%;background:var(--capers)"></i></div></div></div>
     <div class="col"><button class="rond sombre" aria-label="Choisir dans la galerie" data-pick="galerie">${ic('image')}</button><button class="declencheur" aria-label="Prendre la photo" data-pick="camera"><span></span></button><button class="rond sombre" aria-label="Retourner la caméra" data-toast="Caméra arrière">${ic('rotate')}</button></div></div>
@@ -662,7 +667,7 @@ E.camera = () => `<section class="screen dark" id="s-camera" style="overflow:hid
 
 E.apercu = () => `<section class="screen dark" id="s-apercu" style="overflow:hidden"><div class="paysage" id="ap-vue">
   <img class="cam-fond" id="ap-img" src="img/banc.jpg" alt="Ta photo">
-  <div style="position:absolute;inset:auto 0 0;height:200px;background:linear-gradient(transparent,rgba(41,16,12,.85))"></div>
+  <div style="position:absolute;top: auto; right: 0; bottom: 0; left: 0;height:200px;background:linear-gradient(transparent,rgba(41,16,12,.85))"></div>
   <div style="position:absolute;top:20px;left:32px">${fermerRetour()}</div>
   <div class="tampon" style="right:44px;top:150px"><b class="num" id="ap-score">82 %</b><span class="mini">de ressemblance</span></div>
   <div style="position:absolute;left:32px;right:20px;bottom:20px;display:flex;align-items:center;gap:24px"><p class="t-m" style="flex:1">Belle prise !</p>
@@ -787,7 +792,7 @@ E.reglages = () => `<section class="screen" id="s-reglages"><div class="topbar">
     ${[['user', 'Mon profil', 'Antoine', 'data-back'], ['globe', 'Langue', 'Français', 'data-toast="Bobine existe seulement en français pour l\'instant."'], ['lock', 'Confidentialité et position', '', 'data-toast="Cette page n\'est pas encore maquettée."'], ['info', 'Aide et contact', '', 'data-toast="Cette page n\'est pas encore maquettée."']].map(([i, t, v, a]) => `<button class="ligne-reg" ${a}><span class="ico-rond">${ic(i)}</span><div><p style="font:600 16px var(--f-texte);margin:0">${t}</p></div><span class="petit doux">${v}</span>${ic('chev').replace('<svg', '<svg width="16" height="16"')}</button>`).join('')}
     <p class="sur" style="padding-top:24px">Démo du prototype</p>
     ${[['Revoir le lancement et l\'onboarding', 'data-demo="onb"'], ['Plaque illisible', 'data-demo="illisible"'], ['Lieu déjà joué (12 h)', 'data-demo="attente"'], ['Fin d\'un lieu et lieu validé', 'data-demo="fin"'], ['Arrondissement complet', 'data-demo="arr"'], ['Recommencer la partie', 'data-demo="reset"']].map(([t, a]) => `<button class="ligne-reg" ${a}><span class="ico-rond">${ic('play')}</span><div><p style="font:600 16px var(--f-texte);margin:0">${t}</p></div>${ic('chev').replace('<svg', '<svg width="16" height="16"')}</button>`).join('')}
-  </div><div class="actions" style="padding-top:28px">${btn('Se déconnecter', 'b-contour', 'data-demo="onb"', false)}<p class="mini doux" style="text-align:center;margin:0">Bobine 1.0, données de la Ville de Paris (data.gouv.fr)</p></div></section>`;
+  </div><div class="actions" style="padding-top:28px">${btn('Se déconnecter', 'b-contour', 'data-demo="onb"', false)}<p class="mini doux" style="text-align:center;margin:0">Bobine 1.0, données de la Ville de Paris (data.gouv.fr)</p><p class="mini doux" style="text-align:center;margin:0" id="version-ios"></p></div></section>`;
 
 /* ---------- montage ---------- */
 const root = document.getElementById('ecrans');
@@ -837,7 +842,7 @@ function transition(from, to, tr, retourArr) {
 }
 function aller(id, tr = 'push', remplacer) {
   if (enCours || !el(id)) return;
-  const prec = pile.at(-1);
+  const prec = pile[pile.length - 1];
   if (prec && prec.id === id) return;
   entrer(id);
   if (remplacer) pile.pop();
@@ -848,7 +853,7 @@ function aller(id, tr = 'push', remplacer) {
 }
 function onglet(id) {
   if (enCours) return;
-  const prec = pile.at(-1);
+  const prec = pile[pile.length - 1];
   if (prec && prec.id === id && pile.length === 1) { if (id === 'carte') return voirParis(); el(id).scrollTo({ top: 0, behavior: 'smooth' }); return; }
   entrer(id);
   pile = [{ id, tr: 'fade' }];
@@ -859,7 +864,7 @@ function onglet(id) {
 function retourner() {
   if (enCours) return;
   if (pile.length < 2) { onglet('accueil'); return; }
-  const cur = pile.pop(), prec = pile.at(-1);
+  const cur = pile.pop(), prec = pile[pile.length - 1];
   entrer(prec.id, true);
   majTab(prec.id);
   transition(el(cur.id), el(prec.id), cur.tr, true);
@@ -916,7 +921,7 @@ function modeScan(m) {
   document.getElementById('scan-pastille').textContent = { viser: 'Vise la plaque Bobine', detecte: 'Plaque reconnue', illisible: 'Plaque illisible', attente: "Déjà joué aujourd'hui" }[m];
   f.classList.remove('vu');
   stop('scan');
-  if (m === 'viser') { f.innerHTML = ''; plus('scan', () => { if (pile.at(-1)?.id === 'scan') { navigator.vibrate?.(30); modeScan('detecte'); } }, 2500); return; }
+  if (m === 'viser') { f.innerHTML = ''; plus('scan', () => { if (pile[pile.length - 1]?.id === 'scan') { navigator.vibrate?.(30); modeScan('detecte'); } }, 2500); return; }
   f.innerHTML = feuilles[m]();
   requestAnimationFrame(() => requestAnimationFrame(() => f.classList.add('vu')));
 }
@@ -955,9 +960,9 @@ function cadrePaysage(id) {
   v.style.setProperty('--W', W + 'px'); v.style.setProperty('--H', H + 'px');
   v.classList.toggle('tourne', H > W); v.classList.toggle('droit', H <= W);
 }
-addEventListener('resize', () => { const c = pile.at(-1)?.id; if (c === 'camera') cadrePaysage('cam-vue'); if (c === 'apercu') cadrePaysage('ap-vue'); });
+addEventListener('resize', () => { const c = pile[pile.length - 1]?.id; if (c === 'camera') cadrePaysage('cam-vue'); if (c === 'apercu') cadrePaysage('ap-vue'); });
 function bougeScore() {
-  const tick = () => { if (pile.at(-1)?.id !== 'camera') return; const v = 70 + Math.round(Math.random() * 10); document.getElementById('cam-score').textContent = v + ' %'; document.getElementById('cam-jauge').style.width = v + '%'; setTimeout(tick, 900); };
+  const tick = () => { if (pile[pile.length - 1]?.id !== 'camera') return; const v = 70 + Math.round(Math.random() * 10); document.getElementById('cam-score').textContent = v + ' %'; document.getElementById('cam-jauge').style.width = v + '%'; setTimeout(tick, 900); };
   setTimeout(tick, 600);
 }
 document.getElementById('cam-range').addEventListener('input', e => { const v = +e.target.value; document.getElementById('cam-calque').style.opacity = v / 100; document.getElementById('cam-out').textContent = v + ' %'; });
@@ -1307,7 +1312,7 @@ async function revelerPR() {
   await attendre(2400);
   b.classList.remove('vu');
   await attendre(250);
-  if (pile.at(-1)?.id === 'carte') voirLieu('palais-royal', 500);
+  if (pile[pile.length - 1]?.id === 'carte') voirLieu('palais-royal', 500);
 }
 
 async function carteEntrer(param) {
@@ -1332,10 +1337,10 @@ function carteAction(a) {
   if (a === 'replier') { $c('carte-feuille').classList.toggle('replie'); return outils(); }
 }
 function ouvrirCarte(param) {
-  if (pile.at(-1)?.id === 'carte') return carteEntrer(param);
+  if (pile[pile.length - 1]?.id === 'carte') return carteEntrer(param);
   entrer.param = param; onglet('carte');
 }
-addEventListener('resize', () => { if (C.pret && pile.at(-1)?.id === 'carte') { outils(); applique(); } });
+addEventListener('resize', () => { if (C.pret && pile[pile.length - 1]?.id === 'carte') { outils(); applique(); } });
 
 /* --- mes bobines --- */
 function filtre(f) {
@@ -1391,6 +1396,7 @@ document.getElementById('carte-q').addEventListener('input', () => chercher());
 document.getElementById('carte-q').addEventListener('keydown', e => { if (e.key === 'Enter') { const r = document.querySelector('#carte-resultats [data-lieu]'); if (r) voirLieu(r.dataset.lieu); } });
 document.getElementById('f-compte').addEventListener('submit', e => { e.preventDefault(); S.onb = true; save(); onglet('accueil'); });
 
+(() => { const m = navigator.userAgent.match(/OS (\d+)_(\d+)(?:_(\d+))? like Mac/); const v = document.getElementById('version-ios'); if (v) v.textContent = m ? `Ton iPhone : iOS ${m[1]}.${m[2]}${m[3] ? '.' + m[3] : ''}` : ''; })();
 window.__bobine = { aller, onglet, modeScan, S, filtre, voirArr, voirLieu, voirParis, ouvrirCarte, C, progres };
 /* ---------- départ ---------- */
 const h = (location.hash || '').slice(1);
