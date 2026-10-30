@@ -303,6 +303,15 @@ img { display: block; }
 .paysage.tourne { transform: translateX(var(--W)) rotate(90deg); width: var(--H); height: var(--W); }
 .paysage.droit { width: 100%; height: 100%; }
 .cam-fond, .cam-calque { position: absolute; top: 0; right: 0; bottom: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+/* Caméra en direct : vidéo plein écran derrière l'interface ; l'image fixe reste quand la caméra n'est pas disponible */
+.cam-live { position: absolute; top: 0; right: 0; bottom: 0; left: 0; width: 100%; height: 100%; object-fit: cover; display: none; background: #000; }
+.live .cam-live { display: block; }
+.live .scan-fond, .live .paysage > .cam-fond { display: none; }
+.live .paysage { background: transparent; }
+.live.selfie .cam-live { transform: scaleX(-1); }
+.mode-illisible.live .cam-live { filter: blur(7px); }
+.flash-photo { animation: flashPhoto .35s ease-out; }
+@keyframes flashPhoto { 0% { box-shadow: inset 0 0 0 2000px rgba(255,255,255,.85); } 100% { box-shadow: inset 0 0 0 2000px rgba(255,255,255,0); } }
 .grille { position: absolute; top: 0; right: 0; bottom: 0; left: 0; background:
   linear-gradient(to right, transparent calc(33.33% - .5px), rgba(229,227,218,.35) 0 calc(33.33% + .5px), transparent 0 calc(66.66% - .5px), rgba(229,227,218,.35) 0 calc(66.66% + .5px), transparent 0),
   linear-gradient(to bottom, transparent calc(33.33% - .5px), rgba(229,227,218,.35) 0 calc(33.33% + .5px), transparent 0 calc(66.66% - .5px), rgba(229,227,218,.35) 0 calc(66.66% + .5px), transparent 0); }
@@ -621,8 +630,8 @@ E.bon = () => `<section class="screen" id="s-bon"><div class="topbar">${retour()
 
 /* --- Scan --- */
 E.scan = () => `<section class="screen dark mode-viser" id="s-scan" style="overflow:hidden">
-  <div class="scan-fond" id="scan-fond" style="background-image:url(img/scan.jpg)"></div><div class="scan-voile"></div>
-  <div class="haut-plein" style="position:relative;z-index:2;display:flex;justify-content:space-between;align-items:center;padding:14px 20px">${fermer(true)}<span class="pastille" id="scan-pastille">Vise la plaque Bobine</span><button class="rond sombre" aria-label="Flash" data-toast="Flash allumé">${ic('flash')}</button></div>
+  <div class="scan-fond" id="scan-fond" style="background-image:url(img/scan.jpg)"></div><video class="cam-live" id="scan-video" playsinline muted autoplay></video><div class="scan-voile"></div>
+  <div class="haut-plein" style="position:relative;z-index:2;display:flex;justify-content:space-between;align-items:center;padding:14px 20px">${fermer(true)}<span class="pastille" id="scan-pastille">Vise la plaque Bobine</span><button class="rond sombre" aria-label="Flash" data-flash>${ic('flash')}</button></div>
   <div class="viseur"><i></i><i></i><i></i><i></i></div>
   <button class="rond sombre" style="position:absolute;left:20px;bottom:32px;z-index:2" aria-label="Choisir une photo" data-toast="Vise une plaque pour lancer le défi.">${ic('image')}</button>
   <div class="feuille" id="scan-feuille"></div></section>`;
@@ -655,13 +664,13 @@ E.cassette = () => `<section class="screen dark" id="s-cassette">
   <div class="actions">${btn('Prendre la photo', 'b-clair', 'data-go="camera" data-tr="up"')}${btn('Voir la fiche du film', 'b-fant', 'data-go="fiche"', false)}</div></section>`;
 
 /* --- Caméra et aperçu (faux paysage) --- */
-E.camera = () => `<section class="screen dark" id="s-camera" style="overflow:hidden"><div class="paysage" id="cam-vue">
+E.camera = () => `<section class="screen dark" id="s-camera" style="overflow:hidden"><video class="cam-live" id="cam-video" playsinline muted autoplay></video><div class="paysage" id="cam-vue">
   <img class="cam-fond" src="img/vue-camera.jpg" alt=""><img class="cam-calque" id="cam-calque" src="img/scene-emily.jpg" alt="" style="opacity:.5"><div class="grille"></div>
   <div style="position:absolute;top: 0; right: 0; bottom: auto; left: 0;height:110px;background:linear-gradient(rgba(41,16,12,.8),transparent)"></div>
   <div style="position:absolute;top: 0; right: 0; bottom: 0; left: auto;width:200px;background:linear-gradient(to left,rgba(41,16,12,.8),transparent)"></div>
   <div class="cam-ui"><div style="flex:1;display:flex;justify-content:space-between;align-items:flex-start;padding-right:24px">${fermerRetour()}
       <div class="ressemblance"><div><span>Ressemblance</span><b class="num" id="cam-score">74 %</b></div><div class="jauge" style="height:4px;background:rgba(41,16,12,.15)"><i id="cam-jauge" style="width:74%;background:var(--capers)"></i></div></div></div>
-    <div class="col"><button class="rond sombre" aria-label="Choisir dans la galerie" data-pick="galerie">${ic('image')}</button><button class="declencheur" aria-label="Prendre la photo" data-pick="camera"><span></span></button><button class="rond sombre" aria-label="Retourner la caméra" data-toast="Caméra arrière">${ic('rotate')}</button></div></div>
+    <div class="col"><button class="rond sombre" aria-label="Choisir dans la galerie" data-pick="galerie">${ic('image')}</button><button class="declencheur" aria-label="Prendre la photo" data-declencheur><span></span></button><button class="rond sombre" aria-label="Retourner la caméra" data-retourner>${ic('rotate')}</button></div></div>
   <label class="curseur" for="cam-range">Calque <input type="range" id="cam-range" min="0" max="100" value="50"><output id="cam-out" class="num">50 %</output></label>
   <button class="exemple" data-exemple>Photo d'exemple</button></div></section>`;
 
@@ -876,7 +885,7 @@ function hashSync(id) { try { history.replaceState(null, '', '#' + id); } catch 
 const T = {};
 const plus = (id, fn, ms) => (T[id] = T[id] || []).push(setTimeout(fn, ms));
 const stop = id => { (T[id] || []).forEach(clearTimeout); T[id] = []; };
-function quitter(id) { stop(id); }
+function quitter(id) { stop(id); if ((id === 'scan' || id === 'camera') && !['scan', 'camera'].includes((pile[pile.length - 1] || {}).id)) arreterCamera(); }
 function majPieces() {
   document.querySelectorAll('[data-pieces] span:last-child').forEach(x => x.textContent = S.pieces);
   document.querySelectorAll('[data-pieces-n]').forEach(x => x.textContent = S.pieces);
@@ -898,10 +907,10 @@ const entrees = {
     plus('chargement', () => { b.style.width = '100%'; }, 900);
     plus('chargement', () => { if (S.onb) onglet('accueil'); else aller('onb1', 'fade', true); }, 2700);
   },
-  scan(_, p) { modeScan(p || 'viser'); },
+  scan(_, p) { modeScan(p || 'viser'); cameraDirect('scan'); },
   quiz() { quizInit(); },
   cassette() { progres({ cassettePR: true, aReveler: true, ...(S.cassetteVue ? {} : { pieces: S.pieces + 5, cassetteVue: true }) }); majPieces(); const sc = document.getElementById('cassette-scene'); sc.classList.remove('revele'); void sc.offsetWidth; sc.classList.add('revele'); },
-  camera() { cadrePaysage('cam-vue'); bougeScore(); },
+  camera() { cadrePaysage('cam-vue'); bougeScore(); cameraDirect('camera'); },
   apercu() { cadrePaysage('ap-vue'); document.getElementById('ap-img').src = photo(); document.getElementById('ap-score').textContent = S.score + ' %'; },
   'bobine-souvenir'() { progres({ bobinePR: true, cassettePR: true, aReveler: true, prDefis: S.finLieu ? 5 : Math.max(3, S.prDefis === 5 ? 5 : 3), ...(S.bobineVue ? {} : { pieces: S.pieces + 5, bobineVue: true }) }); majPieces(); majPhoto(); document.getElementById('bs-score').textContent = `Plan reproduit à ${S.score} %`; bsSuite(); },
   arrondissement() { if (!S.arrVu) progres({ pieces: S.pieces + 20, arrVu: true }); majPieces(); const sc = document.getElementById('arr-scene'); sc.classList.remove('revele'); void sc.offsetWidth; sc.classList.add('revele'); },
@@ -966,6 +975,56 @@ function bougeScore() {
   setTimeout(tick, 600);
 }
 document.getElementById('cam-range').addEventListener('input', e => { const v = +e.target.value; document.getElementById('cam-calque').style.opacity = v / 100; document.getElementById('cam-out').textContent = v + ' %'; });
+/* --- caméra en direct (app installée, Safari) --- */
+const CAMV = { flux: null, face: 'environment', torche: false };
+const ecranActuel = () => (pile[pile.length - 1] || {}).id;
+async function cameraDirect(id) {
+  const s = el(id), v = document.getElementById(id === 'scan' ? 'scan-video' : 'cam-video');
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
+  try {
+    const t = CAMV.flux && CAMV.flux.getVideoTracks()[0];
+    if (!t || t.readyState !== 'live') CAMV.flux = await navigator.mediaDevices.getUserMedia({ video: { facingMode: CAMV.face, width: { ideal: 1920 }, height: { ideal: 1080 } }, audio: false });
+    if (!['scan', 'camera'].includes(ecranActuel())) return arreterCamera(); // parti pendant la demande d'accès
+    v.srcObject = CAMV.flux;
+    try { await v.play(); } catch (e) {}
+    s.classList.add('live'); s.classList.toggle('selfie', CAMV.face === 'user');
+  } catch (e) { s.classList.remove('live'); }
+}
+function arreterCamera() {
+  if (CAMV.flux) { CAMV.flux.getTracks().forEach(t => t.stop()); CAMV.flux = null; }
+  CAMV.torche = false;
+  ['scan', 'camera'].forEach(i => { el(i).classList.remove('live'); });
+  ['scan-video', 'cam-video'].forEach(i => { const v = document.getElementById(i); if (v) v.srcObject = null; });
+}
+function capturer() {
+  const s = el('camera'), v = document.getElementById('cam-video');
+  if (!s.classList.contains('live') || !v.videoWidth) return document.getElementById('in-camera').click();
+  const W = v.videoWidth, H = v.videoHeight, couche = document.getElementById('cam-vue').classList.contains('tourne') && H > W;
+  const c = document.createElement('canvas'); c.width = couche ? H : W; c.height = couche ? W : H;
+  const x = c.getContext('2d');
+  // téléphone tenu couché : on remet la photo à l'horizontale
+  if (couche) { x.translate(0, W); x.rotate(-Math.PI / 2); }
+  if (CAMV.face === 'user') { x.translate(W, 0); x.scale(-1, 1); }
+  x.drawImage(v, 0, 0, W, H);
+  s.classList.remove('flash-photo'); void s.offsetWidth; s.classList.add('flash-photo');
+  navigator.vibrate?.(20);
+  c.toBlob(b => { if (b) photoPrise(b); }, 'image/jpeg', .88);
+}
+async function retournerCamera() {
+  if (!el('camera').classList.contains('live')) return toast('La caméra en direct n\'est pas disponible ici.');
+  CAMV.face = CAMV.face === 'environment' ? 'user' : 'environment';
+  if (CAMV.flux) { CAMV.flux.getTracks().forEach(t => t.stop()); CAMV.flux = null; }
+  cameraDirect('camera');
+}
+async function flashCamera() {
+  const t = CAMV.flux && CAMV.flux.getVideoTracks()[0];
+  if (!t) return toast('Flash allumé');
+  const caps = t.getCapabilities ? t.getCapabilities() : {};
+  if (!caps.torch) return toast('Ce navigateur ne permet pas d\'allumer le flash.');
+  CAMV.torche = !CAMV.torche;
+  try { await t.applyConstraints({ advanced: [{ torch: CAMV.torche }] }); toast(CAMV.torche ? 'Flash allumé' : 'Flash éteint'); } catch (e) { toast('Le flash n\'a pas pu s\'allumer.'); }
+}
+document.addEventListener('visibilitychange', () => { if (!document.hidden && ['scan', 'camera'].includes(ecranActuel())) cameraDirect(ecranActuel()); });
 function photoPrise(file) {
   if (!file) return;
   if (S.photo && S.photo.startsWith('blob:')) URL.revokeObjectURL(S.photo);
@@ -1375,6 +1434,9 @@ document.getElementById('app').addEventListener('click', e => {
     return aller(d.go, d.tr || 'push');
   }
   if (d.scan) return modeScan(d.scan);
+  if (d.declencheur !== undefined) return capturer();
+  if (d.retourner !== undefined) return retournerCamera();
+  if (d.flash !== undefined) return flashCamera();
   if (d.pick) return document.getElementById(d.pick === 'camera' ? 'in-camera' : 'in-galerie').click();
   if (d.exemple !== undefined) { S.photo = null; S.score = 82; return aller('apercu', 'fade'); }
   if (d.bsContinuer !== undefined) { S.finLieu = false; return ouvrirCarte({}); }
