@@ -174,19 +174,59 @@ img { display: block; }
 .film .cadre { flex: 1; border-radius: 3px; overflow: hidden; background: #000; }
 .film .cadre img { width: 100%; height: 100%; object-fit: cover; }
 
-/* Carte */
-.plan { position: relative; overflow: auto; scrollbar-width: none; touch-action: pan-x pan-y; }
-.plan::-webkit-scrollbar { display: none; }
-.plan svg { display: block; }
-.plan svg [id$="arrondissement"] { cursor: pointer; transition: opacity .2s; }
-.plan svg [id$="arrondissement"]:active { opacity: .8; }
-.halo { transform-box: fill-box; transform-origin: center; }
-.valide-start .rep-point { transform: scale(0); }
-.rep-point { transform-box: fill-box; transform-origin: center; transition: transform .6s cubic-bezier(.2,1.4,.4,1); }
-.rep-halo { transform-box: fill-box; transform-origin: center; opacity: 0; }
-.pulse .rep-halo { animation: pulse 1.4s ease-out 2; }
-@keyframes pulse { 0% { transform: scale(.4); opacity: .45; } 100% { transform: scale(2.6); opacity: 0; } }
-
+/* Carte interactive */
+.carte-vue { position: absolute; inset: 0; background: #DCD8CC; touch-action: none; overflow: hidden; cursor: grab; -webkit-user-select: none; user-select: none; }
+.carte-vue:active { cursor: grabbing; }
+.carte-vue svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; display: block; }
+.m-arr { cursor: pointer; }
+#m-etiq { transition: opacity .25s; }
+.m-etiq { cursor: pointer; }
+.m-etiq .lb, .m-pt .pt, .pin-in { transform-box: fill-box; transform-origin: center; }
+.m-etiq .lb.bump { animation: bump .6s ease-out .1s; }
+@keyframes bump { 40% { transform: scale(1.35); } }
+.m-pt { cursor: pointer; }
+.m-pt .pt { transition: transform .2s; }
+.m-pt.sel .pt { transform: scale(0); }
+.m-pt.attend { display: none; }
+.m-pt .onde { opacity: 0; transform-box: fill-box; transform-origin: center; }
+.m-pt.pop .pt { animation: pop .75s cubic-bezier(.2,1.7,.4,1) both; }
+.m-pt.pop .onde { animation: onde 1.5s ease-out 3; }
+.m-pt.pop .o2 { animation-delay: .5s; }
+@keyframes pop { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+@keyframes onde { 0% { transform: scale(.7); opacity: .7; } 100% { transform: scale(4); opacity: 0; } }
+.moi-halo { transform-box: fill-box; transform-origin: center; animation: moi 2.4s ease-out infinite; }
+@keyframes moi { 0% { transform: scale(.8); opacity: .5; } 100% { transform: scale(2); opacity: 0; } }
+.pin-in.tombe { animation: tombe .45s cubic-bezier(.2,1.5,.4,1); }
+@keyframes tombe { 0% { transform: translateY(-18px) scale(.6); opacity: 0; } 100% { transform: none; opacity: 1; } }
+.carte-haut { position: absolute; top: 0; left: 0; right: 0; z-index: 3; pointer-events: none; }
+.carte-haut > div { pointer-events: auto; padding: 14px 20px 12px; }
+.ch-paris { background: linear-gradient(var(--parcel) 72%, rgba(229,227,218,0)); padding-bottom: 26px !important; }
+.ch-ligne { display: flex; align-items: center; gap: 10px; }
+.ch-ligne h1 { flex: 1; }
+.ch-focus { display: flex; gap: 10px; align-items: center; }
+.carte-haut[data-mode="paris"] .ch-focus, .carte-haut:not([data-mode="paris"]) .ch-paris { display: none; }
+.champ { flex: 1; display: flex; align-items: center; gap: 8px; height: 44px; border-radius: 999px; border: 1px solid var(--fig); background: var(--surface); padding: 0 14px; color: var(--texte-2); }
+.champ svg { width: 18px; height: 18px; flex: none; }
+.champ input { border: 0; background: none; flex: 1; min-width: 0; font: 500 16px var(--f-texte); color: var(--fig); outline: none; -webkit-appearance: none; appearance: none; }
+.champ input::-webkit-search-cancel-button { display: none; }
+.carte-resultats { position: absolute; left: 12px; right: 12px; top: calc(76px + var(--st)); z-index: 5; max-height: 52%; overflow-y: auto; overscroll-behavior: contain; background: var(--parcel); border: 1px solid var(--fig); border-radius: 18px; padding: 12px 16px; display: flex; flex-direction: column; gap: 6px; }
+.carte-outils { position: absolute; right: 16px; top: 140px; z-index: 3; display: flex; flex-direction: column; gap: 10px; transition: top .35s cubic-bezier(.2,.8,.2,1); }
+.carte-outils .rond { width: 44px; height: 44px; }
+.ordi-seul { display: none !important; }
+@media (hover: hover) and (pointer: fine) { .ordi-seul { display: grid !important; font: 500 22px/1 var(--f-texte); } }
+.carte-feuille { position: absolute; left: 0; right: 0; bottom: 60px; z-index: 4; background: var(--parcel); border-radius: 22px 22px 0 0; border-top: 1px solid var(--fig); padding: 8px 20px 40px; display: flex; flex-direction: column; gap: 12px; max-height: 58%; overflow-y: auto; overscroll-behavior: contain; transition: transform .38s cubic-bezier(.2,.8,.2,1); }
+.carte-feuille.cache { transform: translateY(calc(100% + 140px)); pointer-events: none; }
+.carte-feuille.replie { max-height: 92px; overflow: hidden; }
+.carte-feuille > * { flex-shrink: 0; }
+.carte-feuille .poignee { display: block; width: 44px; height: 5px; padding: 0; border: 0; position: relative; margin: 2px auto 2px; }
+.carte-feuille .poignee::after { content: ""; position: absolute; inset: -12px -30px; }
+.legende { display: flex; gap: 14px; flex-wrap: wrap; }
+.legende span { display: inline-flex; gap: 6px; align-items: center; }
+.legende i { width: 12px; height: 12px; border: 1px solid var(--fig); border-radius: 2px; }
+.billet-fin { display: flex; gap: 12px; align-items: center; padding: 14px 16px; border-radius: 14px; border: 1px solid var(--fig); background: var(--chartreuse); }
+.billet-fin svg { width: 22px; height: 22px; flex: none; }
+.carte-bandeau { position: absolute; left: 50%; top: 120px; z-index: 6; transform: translate(-50%, -14px); opacity: 0; background: var(--fig); color: var(--parcel); border-radius: 999px; padding: 12px 22px 12px 16px; display: flex; gap: 12px; align-items: center; white-space: nowrap; transition: opacity .4s, transform .4s cubic-bezier(.2,1.4,.4,1); pointer-events: none; }
+.carte-bandeau.vu { opacity: 1; transform: translate(-50%, 0); }
 .volet { background: var(--parcel); border-radius: 22px 22px 0 0; border-top: 1px solid var(--fig); padding: 10px 20px 20px; display: flex; flex-direction: column; gap: 12px; position: relative; z-index: 2; transition: opacity .5s, transform .5s; }
 .poignee { width: 44px; height: 5px; border-radius: 3px; background: rgba(41,16,12,.25); margin: 0 auto 4px; }
 .ligne-lieu { display: flex; align-items: center; gap: 12px; padding: 4px 0; text-align: left; width: 100%; }
@@ -412,8 +452,11 @@ const ic = (n, sw = 1.8) => `<svg viewBox="0 0 24 24" fill="none" stroke="curren
 /* ---------- état de la démo ---------- */
 let store = {};
 try { store = JSON.parse(localStorage.getItem('bobine-demo') || '{}'); } catch (e) {}
-const save = () => { try { localStorage.setItem('bobine-demo', JSON.stringify({ onb: S.onb })); } catch (e) {} };
-const S = { pieces: 85, onb: !!store.onb, photo: null, score: 82, quiz: null, finLieu: false, valide: false };
+/* Progression de la partie, gardée sur le téléphone. Le Palais-Royal (pr), sa cassette et sa bobine n'apparaissent qu'une fois gagnés. */
+const PROG = ['pieces', 'pr', 'cassettePR', 'bobinePR', 'prDefis', 'aReveler', 'cassetteVue', 'bobineVue', 'arrVu'];
+const save = () => { try { localStorage.setItem('bobine-demo', JSON.stringify({ onb: S.onb, p: Object.fromEntries(PROG.map(k => [k, S[k]])) })); } catch (e) {} };
+const S = { pieces: 85, onb: !!store.onb, photo: null, score: 82, quiz: null, finLieu: false, pr: false, cassettePR: false, bobinePR: false, prDefis: 3, aReveler: false, v: 0, ...(store.p || {}) };
+const progres = patch => { Object.assign(S, patch); S.v++; save(); };
 const photo = () => S.photo || 'img/banc.jpg';
 
 /* ---------- petits composants ---------- */
@@ -539,7 +582,7 @@ function parcoursTicket(go) {
 
 E.notifications = () => `<section class="screen" id="s-notifications"><div class="topbar">${retour()}<h1 class="t-l">Notifications</h1></div>
   <div class="pad" style="display:flex;flex-direction:column;gap:6px">
-    ${[['Aujourd\'hui', [['route', 'Défi prêt au Pont-Neuf', 'il y a 5 min', 'carte-1er'], ['coins', 'Plus que 40 pièces', 'il y a 2 h', 'bon'], ['film', 'Avant-première Emily in Paris', 'il y a 4 h', 'fiche']]], ['Cette semaine', [['medal', 'Badge « Rive gauche » obtenu', 'lun.', 'profil-t'], ['play', 'Nouveau parcours Lupin', 'sam.', 'parcours']]]].map(([g, l]) => `
+    ${[['Aujourd\'hui', [['route', 'Défi prêt au Pont-Neuf', 'il y a 5 min', 'lieu-pont-neuf'], ['coins', 'Plus que 40 pièces', 'il y a 2 h', 'bon'], ['film', 'Avant-première Emily in Paris', 'il y a 4 h', 'fiche']]], ['Cette semaine', [['medal', 'Badge « Rive gauche » obtenu', 'lun.', 'profil-t'], ['play', 'Nouveau parcours Lupin', 'sam.', 'parcours']]]].map(([g, l]) => `
       <p class="sur" style="padding:14px 0 4px">${g}</p>${l.map(([i, t, q, go]) => `<button class="ligne-reg" ${go === 'profil-t' ? 'data-tabgo="profil"' : `data-go="${go}"`}><span class="ico-rond">${ic(i)}</span><div><p style="font:600 16px var(--f-texte);margin:0">${t}</p><p class="petit doux">${q}</p></div>${ic('chev').replace('<svg', '<svg width="16" height="16"')}</button>`).join('')}`).join('')}
   </div></section>`;
 
@@ -642,42 +685,23 @@ E.arrondissement = () => `<section class="screen rouge" id="s-arrondissement">
       <div style="width:300px;max-width:100%;text-align:left">${billetGain('Arrondissement complété', 'Bonus arrondissement', '', '+20', 'var(--oxblood)')}</div></div></div>
   <div class="actions">${btn('Voir ma bobine du 5e', 'b-clair', 'data-go="bobine-5e"')}${btn('Partager', 'b-fant', 'data-copie="J\'ai complété le 5e arrondissement sur Bobine !"', false)}</div></section>`;
 
-/* --- Carte --- */
-E.carte = () => `<section class="screen" id="s-carte" data-nav="carte"><div class="topbar" style="padding-bottom:0"><h1 class="t-xl" style="flex:1">Mon plan</h1>${compteur()}</div>
-  <p class="pad petit doux" style="margin:0">17 lieux trouvés dans 7 arrondissements</p>
-  <div class="plan" id="plan-paris" data-zoom=".64" data-centre="628,330" style="height:470px;margin-top:4px"></div>
-  <div class="pad" style="display:flex;gap:14px;flex-wrap:wrap;padding-top:4px" class="mini">${[['#F1EFE7', 'Pas commencé'], ['#E8E2B9', 'Entamé'], ['#C8B867', 'Avancé'], ['#53461C', 'Complet']].map(([c, t]) => `<span class="mini" style="display:inline-flex;gap:6px;align-items:center"><i style="width:12px;height:12px;border:1px solid var(--fig);background:${c};border-radius:2px"></i>${t}</span>`).join('')}</div>
-  <div class="pad" style="padding-top:20px"><h2 class="t-l">13 arrondissements à ouvrir</h2><p class="petit doux">Touche un arrondissement pour voir tes lieux.</p></div></section>`;
-
-const voletArr = (n, nom, trouves, total, lignes, bobine) => `<div class="volet" id="volet-${n}"><div class="poignee"></div>
-  <div style="display:flex;justify-content:space-between;align-items:center">${plaque(n, nom)}<p style="margin:0"><b class="num" style="font:400 30px var(--f-titre);color:var(--oxblood)">${trouves}</b> <span class="petit doux">/ ${total} plaques</span></p></div>
-  <div class="jauge"><i style="width:${trouves / total * 100}%"></i></div><p class="mini" style="color:var(--oxblood)">Tes lieux trouvés</p>
-  ${lignes.map(([l, d, go]) => `<button class="ligne-lieu" data-go="${go}"><span class="ok">${ic('check', 2.4)}</span><div><p style="font:600 16px var(--f-texte);margin:0">${l}</p><p class="petit doux">${d}</p></div>${ic('chev').replace('<svg', '<svg class="chev"')}</button>`).join('')}
-  ${btn('Ma bobine du ' + n, 'b-sec', `data-go="${bobine}"`)}</div>`;
-
-const carteArr = (id, n, zoomCentre, volet) => `<section class="screen fixe" id="s-${id}" data-nav="carte" style="padding-bottom:81px">
-  <div class="plan" id="plan-${id}" data-zoom="1" data-centre="${zoomCentre}" style="position:absolute;inset:0"></div>
-  <div class="haut-plein" style="position:relative;z-index:2;padding:14px 20px;display:flex;gap:10px;align-items:center;pointer-events:none">
-    <span style="pointer-events:auto">${retour()}</span>
-    <label style="pointer-events:auto;flex:1;display:flex;align-items:center;gap:8px;height:44px;border-radius:999px;border:1px solid var(--fig);background:var(--surface);padding:0 14px" class="petit doux">${ic('search').replace('<svg', '<svg width="18" height="18"')}<input aria-label="Rechercher" placeholder="Un lieu, un film, une série…" style="border:0;background:none;flex:1;min-width:0;font:500 15px var(--f-texte);color:var(--fig)"></label></div>
-  <div class="grow" style="pointer-events:none"></div>
-  <div id="toast-${id}" style="z-index:4;pointer-events:none;opacity:0;transition:opacity .4s, transform .4s;transform:translateY(14px);position:absolute;left:50%;bottom:112px;translate:-50% 0;background:var(--fig);color:var(--parcel);border-radius:999px;padding:12px 22px 12px 16px;display:flex;gap:12px;align-items:center;white-space:nowrap;border:1px solid var(--fig)"><span style="color:var(--chartreuse)">${ic('medal').replace('<svg', '<svg width="22" height="22"')}</span><div><p style="font:600 16px var(--f-texte);margin:0">Lieu validé</p><p class="petit" style="opacity:.85">Jardin du Palais-Royal, 5 défis sur 5</p></div></div>
-  <div style="position:relative;z-index:3" id="bas-${id}">${volet}</div></section>`;
-
-E['carte-5e'] = () => carteArr('carte-5e', '5e', '640,430', voletArr('5e', 'Panthéon', 6, 10, [["Place de l'Estrapade", '3 cassettes, prochain défi dans 11 h', 'spot'], ['Rue Mouffetard', "2 cassettes, un défi t'attend", 'bobine-5e'], ['Quai de la Tournelle', "1 cassette, un défi t'attend", 'bobine-5e']], 'bobine-5e'));
-E['carte-1er'] = () => carteArr('carte-1er', '1er', '575,300', voletArr('1er', 'Louvre', 4, 12, [['Jardin du Palais-Royal', 'Lieu terminé, 5 défis sur 5', 'souvenir'], ['Pont-Neuf', "1 cassette, un défi t'attend", 'bobine-1er'], ['Place Dauphine', '1 cassette, prochain défi dans 6 h', 'bobine-1er'], ['Place de Valois', "1 cassette, un défi t'attend", 'bobine-1er']], 'bobine-1er'));
-
-E.spot = () => `<section class="screen fixe" id="s-spot" data-nav="carte" style="padding-bottom:81px">
-  <div class="plan" id="plan-spot" data-zoom="1" data-centre="640,410" style="position:absolute;inset:0"></div>
-  <div class="haut-plein" style="position:relative;z-index:2;padding:14px 20px">${retour()}</div><div class="grow"></div>
-  <div class="volet" style="gap:14px"><div class="poignee"></div>
-    <div style="display:flex;gap:8px;align-items:center"><span class="chip on">5e arr.</span><span class="petit doux">Trouvée le 12 octobre</span></div>
-    <h2 class="t-l">Place de l'Estrapade</h2>
-    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><div class="defis"><span class="fait">${ic('check', 2.4)}</span><span class="fait">${ic('check', 2.4)}</span><span class="fait">${ic('check', 2.4)}</span><span style="background:#EDE6B8">${ic('clock')}</span><span style="border-style:dashed;opacity:.6">${ic('lock')}</span></div><p class="petit doux">3 défis sur 5 réussis</p></div>
-    ${billetMinuteur('Défi 4 sur 5, niveau difficile', "Il apparaîtra ici dès qu'il est prêt.", 'var(--parcel)')}
-    <div style="display:flex;gap:12px"><a class="btn b-contour" href="https://www.google.com/maps/dir/?api=1&destination=Place%20de%20l%27Estrapade%2C%20Paris" target="_blank" rel="noopener">Itinéraire</a>${btn('Ma bobine', 'b-prin', 'data-go="bobine-5e"')}</div></div></section>`;
+/* --- Carte (un seul écran interactif : Paris, arrondissement, lieu, recherche) --- */
+E.carte = () => `<section class="screen fixe plein" id="s-carte" data-nav="carte">
+  <div class="carte-vue" id="carte-vue" aria-label="Plan de Paris : glisse pour te déplacer, pince pour zoomer, touche un arrondissement ou un lieu"></div>
+  <div class="carte-haut" id="carte-haut" data-mode="paris">
+    <div class="ch-paris haut-plein"><div class="ch-ligne"><h1 class="t-xl">Mon plan</h1><button class="rond" data-carte="chercher" aria-label="Rechercher un lieu">${ic('search')}</button>${compteur()}</div>
+      <p class="petit doux" id="carte-sous"></p></div>
+    <div class="ch-focus haut-plein"><button class="rond" data-carte="retour" aria-label="Retour">${ic('back')}</button>
+      <label class="champ">${ic('search')}<input id="carte-q" type="search" autocomplete="off" enterkeyhint="search" placeholder="Un lieu, un film, une série…" aria-label="Rechercher un lieu, un film ou une série"></label></div>
+  </div>
+  <div class="carte-resultats" id="carte-resultats" hidden></div>
+  <div class="carte-outils" id="carte-outils"><button class="rond" data-carte="moi" aria-label="Me localiser">${ic('locate')}</button><button class="rond ordi-seul" data-carte="plus" aria-label="Zoomer">+</button><button class="rond ordi-seul" data-carte="moins" aria-label="Dézoomer">−</button></div>
+  <div class="carte-bandeau" id="carte-bandeau" role="status" aria-live="polite"></div>
+  <div class="carte-feuille cache" id="carte-feuille"></div>
+</section>`;
 
 /* --- Collection --- */
+const etageresVues = () => etageres.map(e => e.n === '1er' && !S.cassettePR ? { ...e, k: e.k.filter(k => k[0] !== 'Emily in Paris') } : e);
 function etagereHTML(e, demo) {
   const slots = Math.min(e.total, 8);
   const vhs = [];
@@ -690,10 +714,10 @@ function etagereHTML(e, demo) {
     <div class="niche"><div class="rang">${vhs.join('')}</div><div class="planche"></div></div></div>`;
 }
 E.collection = () => `<section class="screen" id="s-collection" data-nav="collection"><div class="topbar" style="padding-bottom:0"><h1 class="t-xl" style="flex:1">Ma vidéothèque</h1>${compteur()}</div>
-  <p class="pad petit doux" style="margin:0">18 cassettes dans 7 arrondissements</p>
-  <div class="pad" style="display:flex;flex-direction:column;gap:30px;padding-top:24px;padding-bottom:20px">${etageres.map(e => `<button style="display:block;text-align:left" ${e.go ? `data-go="${e.go}"` : `data-toast="Dans la démo, les bobines du 1er et du 5e sont détaillées."`}>${etagereHTML(e)}</button>`).join('')}</div></section>`;
+  <p class="pad petit doux" style="margin:0">${etageresVues().reduce((n, e) => n + e.k.length, 0)} cassettes dans 7 arrondissements</p>
+  <div class="pad" style="display:flex;flex-direction:column;gap:30px;padding-top:24px;padding-bottom:20px">${etageresVues().map(e => `<button style="display:block;text-align:left" ${e.go ? `data-go="${e.go}"` : `data-toast="Dans la démo, les bobines du 1er et du 5e sont détaillées."`}>${etagereHTML(e)}</button>`).join('')}</div></section>`;
 
-const bobineArr = (n) => { const b = bobines[n]; const tr = b.lignes.length; const manq = b.total - tr;
+const bobineArr = (n) => { const b0 = bobines[n]; const b = { ...b0, lignes: b0.lignes.filter(x => x[3] !== 'BANC' || S.cassettePR) }; const tr = b.lignes.length; const manq = b.total - tr;
   return `<section class="screen" id="s-bobine-${n}" data-nav="collection"><div class="topbar">${retour()}<h1 class="t-l">Bobine du ${n}</h1>${compteur()}</div>
   <div class="pad" style="display:flex;flex-direction:column;gap:12px"><div style="display:flex;justify-content:space-between;align-items:center">${plaque(n, b.nom)}<p style="margin:0"><b class="num" style="font:400 30px var(--f-titre);color:var(--oxblood)">${tr}</b> <span class="petit doux">/ ${b.total} cassettes</span></p></div><div class="jauge"><i style="width:${tr / b.total * 100}%"></i></div></div>
   <div style="padding:24px 20px 0;display:flex;flex-direction:column">${b.lignes.map(([t, l, d, img, go]) => `
@@ -711,10 +735,10 @@ E.fiche = () => `<section class="screen" id="s-fiche"><div class="hero dark" sty
     <div style="display:flex;flex-direction:column;gap:8px"><h2 class="t-m" style="margin-bottom:4px">Où le voir</h2>
       ${[['N', 'Netflix', '4 saisons en streaming', 'Regarder', 'https://www.netflix.com/fr/title/81037371'], ['img/logo-a.png', 'Pathé Boulogne', 'Séance spéciale le 6 nov.', 'Réserver', 'https://www.pathe.fr'], ['img/logo-b.png', 'UGC Ciné Cité La Défense', 'Marathon le 15 nov.', 'Réserver', 'https://www.ugc.fr'], ['img/logo-c.png', 'MK2 Bibliothèque', 'Avant-première le 3 déc.', 'Réserver', 'https://www.mk2.com']].map(([lg, n, d, a, u]) => `
         <div class="ou"><span class="logo" style="${lg === 'N' ? 'background:#000;color:#E50914;font:700 26px var(--f-texte)' : ''}">${lg === 'N' ? 'N' : `<img src="${lg}" alt="">`}</span><div><p style="font:600 16px var(--f-texte);margin:0">${n}</p><p class="petit doux">${d}</p></div><a href="${u}" target="_blank" rel="noopener">${a}</a></div>`).join('')}</div>
-    <div style="display:flex;flex-direction:column;gap:12px"><h2 class="t-m">Ta bobine</h2>${bobCarte('Jardin du Palais-Royal', 'Défi 3 sur 5, le 29 octobre', '<span data-score>' + S.score + '</span>', 'img/scene-emily.jpg', photo(), 'souvenir')}</div>
-    <div style="display:flex;flex-direction:column;gap:8px"><h2 class="t-m">Lieux de la série déjà trouvés (2 sur 3)</h2>
-      <button class="lieu-ligne" data-go="spot"><img src="img/estrapade.jpg" alt=""><div><p style="font:600 16px var(--f-texte);margin:0">Place de l'Estrapade</p><p class="petit doux">5e, trouvée le 12 octobre</p></div>${ic('check', 2)}</button>
-      <button class="lieu-ligne" data-go="souvenir"><img src="${photo()}" alt="" data-photo><div><p style="font:600 16px var(--f-texte);margin:0">Jardin du Palais-Royal</p><p class="petit doux">1er, trouvé le 29 octobre</p></div>${ic('check', 2)}</button></div>
+    ${S.bobinePR ? '' : '<!--'}<div style="display:flex;flex-direction:column;gap:12px"><h2 class="t-m">Ta bobine</h2>${bobCarte('Jardin du Palais-Royal', `Défi ${S.prDefis} sur 5, le 29 octobre`, '<span data-score>' + S.score + '</span>', 'img/lieu-x.jpg', photo(), 'souvenir')}</div>${S.bobinePR ? '' : '-->'}
+    <div style="display:flex;flex-direction:column;gap:8px"><h2 class="t-m">Lieux de la série déjà trouvés (${S.pr ? 2 : 1} sur 3)</h2>
+      <button class="lieu-ligne" data-lieu-carte="estrapade"><img src="img/estrapade.jpg" alt=""><div><p style="font:600 16px var(--f-texte);margin:0">Place de l'Estrapade</p><p class="petit doux">5e, trouvée le 12 octobre</p></div>${ic('check', 2)}</button>
+      ${S.pr ? '' : '<!--'}<button class="lieu-ligne" data-lieu-carte="palais-royal"><img src="${photo()}" alt="" data-photo><div><p style="font:600 16px var(--f-texte);margin:0">Jardin du Palais-Royal</p><p class="petit doux">1er, trouvé le 29 octobre</p></div>${ic('check', 2)}</button>${S.pr ? '' : '-->'}</div>
   </div></section>`;
 
 E.souvenir = () => `<section class="screen" id="s-souvenir"><div class="topbar">${retour()}<h1 class="t-l">Souvenir</h1>${compteur()}</div>
@@ -736,17 +760,23 @@ E.profil = () => `<section class="screen" id="s-profil" data-nav="profil"><div c
   <div class="defile" style="padding-bottom:20px"><div class="rang-int">${bobinesProfil().map(b => `<div style="width:300px;flex:none">${bobCarte(b[0], b[1], b[2], b[3], b[4], b[5])}</div>`).join('')}</div></div></section>`;
 
 function mesBobines() {
+  return S.bobinePR ? mesBobines0() : mesBobines0().slice(1);
+}
+function mesBobines0() {
   return [['Jardin du Palais-Royal', 'Emily in Paris, le 29 octobre', S.score, 'img/9bea01d4.jpg', S.photo || 'img/980a51e4.jpg', 'souvenir', '1er', 29],
     ['Louvre', 'Lupin, le 21 octobre', 62, 'img/quai.jpg', 'img/361bdb0d.jpg', '', '1er', 21],
     ['Louvre', 'Davinci Code, le 13 octobre', 71, 'img/ed5b58a7.jpg', 'img/c8812578.jpg', '', '1er', 13]];
 }
 function bobinesProfil() {
+  return S.bobinePR ? bobinesProfil0() : bobinesProfil0().slice(1);
+}
+function bobinesProfil0() {
   return [['Jardin du Palais-Royal', 'Emily in Paris, le 29 octobre', S.score, 'img/61741291.jpg', S.photo || 'img/980a51e4.jpg', 'souvenir'],
     ['Pont-Neuf', 'Lupin, le 21 octobre', 76, 'img/489afe95.jpg', 'img/361bdb0d.jpg', ''],
     ['Place Dauphine', 'Validé, le 18 octobre', 68, 'img/dauphine.jpg', 'img/dauphine-photo.jpg', '']];
 }
 E['mes-bobines'] = () => `<section class="screen" id="s-mes-bobines" data-nav="profil"><div class="topbar">${retour()}<h1 class="t-l">Mes bobines</h1>${compteur()}</div>
-  <p class="pad petit doux" style="margin:0">9 plans reproduits, 74 % de ressemblance en moyenne</p>
+  <p class="pad petit doux" style="margin:0">${S.bobinePR ? 9 : 8} plans reproduits, 74 % de ressemblance en moyenne</p>
   <div class="pad" style="display:flex;gap:8px;flex-wrap:wrap;padding-top:14px" role="group" aria-label="Filtrer">${['Récentes', 'Meilleur score', '5e', '1er'].map((f, i) => `<button class="chip${i === 0 ? ' on' : ''}" data-filtre="${f}">${f}</button>`).join('')}</div>
   <div class="pad" id="mb-liste" style="display:flex;flex-direction:column;gap:14px;padding-top:16px"></div></section>`;
 
@@ -756,8 +786,8 @@ E.reglages = () => `<section class="screen" id="s-reglages"><div class="topbar">
     <p class="sur" style="padding-top:24px">Compte</p>
     ${[['user', 'Mon profil', 'Antoine', 'data-back'], ['globe', 'Langue', 'Français', 'data-toast="Bobine existe seulement en français pour l\'instant."'], ['lock', 'Confidentialité et position', '', 'data-toast="Cette page n\'est pas encore maquettée."'], ['info', 'Aide et contact', '', 'data-toast="Cette page n\'est pas encore maquettée."']].map(([i, t, v, a]) => `<button class="ligne-reg" ${a}><span class="ico-rond">${ic(i)}</span><div><p style="font:600 16px var(--f-texte);margin:0">${t}</p></div><span class="petit doux">${v}</span>${ic('chev').replace('<svg', '<svg width="16" height="16"')}</button>`).join('')}
     <p class="sur" style="padding-top:24px">Démo du prototype</p>
-    ${[['Revoir le lancement et l\'onboarding', 'data-demo="onb"'], ['Plaque illisible', 'data-demo="illisible"'], ['Lieu déjà joué (12 h)', 'data-demo="attente"'], ['Fin d\'un lieu et lieu validé', 'data-demo="fin"'], ['Arrondissement complet', 'data-demo="arr"']].map(([t, a]) => `<button class="ligne-reg" ${a}><span class="ico-rond">${ic('play')}</span><div><p style="font:600 16px var(--f-texte);margin:0">${t}</p></div>${ic('chev').replace('<svg', '<svg width="16" height="16"')}</button>`).join('')}
-  </div><div class="actions" style="padding-top:28px">${btn('Se déconnecter', 'b-contour', 'data-demo="onb"', false)}<p class="mini doux" style="text-align:center;margin:0">Bobine 1.0, données de la Ville de Paris (opendata.paris.fr)</p></div></section>`;
+    ${[['Revoir le lancement et l\'onboarding', 'data-demo="onb"'], ['Plaque illisible', 'data-demo="illisible"'], ['Lieu déjà joué (12 h)', 'data-demo="attente"'], ['Fin d\'un lieu et lieu validé', 'data-demo="fin"'], ['Arrondissement complet', 'data-demo="arr"'], ['Recommencer la partie', 'data-demo="reset"']].map(([t, a]) => `<button class="ligne-reg" ${a}><span class="ico-rond">${ic('play')}</span><div><p style="font:600 16px var(--f-texte);margin:0">${t}</p></div>${ic('chev').replace('<svg', '<svg width="16" height="16"')}</button>`).join('')}
+  </div><div class="actions" style="padding-top:28px">${btn('Se déconnecter', 'b-contour', 'data-demo="onb"', false)}<p class="mini doux" style="text-align:center;margin:0">Bobine 1.0, données de la Ville de Paris (data.gouv.fr)</p></div></section>`;
 
 /* ---------- montage ---------- */
 const root = document.getElementById('ecrans');
@@ -779,9 +809,14 @@ const anims = {
 };
 const appEl = document.getElementById('app');
 const cadreOrdi = matchMedia('(hover: hover) and (pointer: fine) and (min-width: 720px)');
-function ajuste() { appEl.style.setProperty('--s', cadreOrdi.matches ? Math.min(1, (innerHeight - 32) / 900, (innerWidth - 32) / 428) : 1); }
+const enApp = navigator.standalone === true || matchMedia('(display-mode: standalone)').matches;
+function ajuste() {
+  appEl.style.setProperty('--s', cadreOrdi.matches ? Math.min(1, (innerHeight - 32) / 900, (innerWidth - 32) / 428) : 1);
+  // En app sur l'écran d'accueil, iOS retire parfois la barre d'état de la hauteur : on prend la hauteur réelle de l'écran.
+  if (enApp) { const h = Math.max(innerHeight, document.documentElement.clientHeight, screen.height) + 'px'; document.documentElement.style.height = document.body.style.height = appEl.style.height = h; }
+}
 ajuste(); addEventListener('resize', ajuste);
-['scan', 'camera', 'apercu', 'carte-5e', 'carte-1er', 'spot'].forEach(i => el(i).classList.add('plein'));
+['scan', 'camera', 'apercu'].forEach(i => el(i).classList.add('plein'));
 function majTab(id) {
   const s = el(id), t = s.dataset.nav;
   appEl.classList.toggle('clair', s.classList.contains('dark') || s.classList.contains('rouge'));
@@ -814,7 +849,7 @@ function aller(id, tr = 'push', remplacer) {
 function onglet(id) {
   if (enCours) return;
   const prec = pile.at(-1);
-  if (prec && prec.id === id && pile.length === 1) { el(id).scrollTo({ top: 0, behavior: 'smooth' }); return; }
+  if (prec && prec.id === id && pile.length === 1) { if (id === 'carte') return voirParis(); el(id).scrollTo({ top: 0, behavior: 'smooth' }); return; }
   entrer(id);
   pile = [{ id, tr: 'fade' }];
   majTab(id);
@@ -860,16 +895,17 @@ const entrees = {
   },
   scan(_, p) { modeScan(p || 'viser'); },
   quiz() { quizInit(); },
-  cassette() { if (!S.cassetteVue) { S.pieces += 5; S.cassetteVue = true; } majPieces(); const sc = document.getElementById('cassette-scene'); sc.classList.remove('revele'); void sc.offsetWidth; sc.classList.add('revele'); },
+  cassette() { progres({ cassettePR: true, aReveler: true, ...(S.cassetteVue ? {} : { pieces: S.pieces + 5, cassetteVue: true }) }); majPieces(); const sc = document.getElementById('cassette-scene'); sc.classList.remove('revele'); void sc.offsetWidth; sc.classList.add('revele'); },
   camera() { cadrePaysage('cam-vue'); bougeScore(); },
   apercu() { cadrePaysage('ap-vue'); document.getElementById('ap-img').src = photo(); document.getElementById('ap-score').textContent = S.score + ' %'; },
-  'bobine-souvenir'() { if (!S.bobineVue) { S.pieces += 5; S.bobineVue = true; } majPieces(); majPhoto(); document.getElementById('bs-score').textContent = `Plan reproduit à ${S.score} %`; bsSuite(); },
-  arrondissement() { if (!S.arrVu) { S.pieces += 20; S.arrVu = true; } majPieces(); const sc = document.getElementById('arr-scene'); sc.classList.remove('revele'); void sc.offsetWidth; sc.classList.add('revele'); },
-  carte() { plan('carte'); }, 'carte-5e'() { plan('carte-5e'); }, spot() { plan('spot'); },
-  'carte-1er'() { plan('carte-1er'); lieuValide(); },
+  'bobine-souvenir'() { progres({ bobinePR: true, cassettePR: true, aReveler: true, prDefis: S.finLieu ? 5 : Math.max(3, S.prDefis === 5 ? 5 : 3), ...(S.bobineVue ? {} : { pieces: S.pieces + 5, bobineVue: true }) }); majPieces(); majPhoto(); document.getElementById('bs-score').textContent = `Plan reproduit à ${S.score} %`; bsSuite(); },
+  arrondissement() { if (!S.arrVu) progres({ pieces: S.pieces + 20, arrVu: true }); majPieces(); const sc = document.getElementById('arr-scene'); sc.classList.remove('revele'); void sc.offsetWidth; sc.classList.add('revele'); },
+  carte(retour, p) { requestAnimationFrame(() => carteEntrer(retour ? null : p)); },
   'mes-bobines'() { filtre('Récentes'); },
 };
-function entrer(id, depuisRetour) { majPieces(); majPhoto(); const f = entrees[id]; if (f && !(depuisRetour && ['cassette', 'arrondissement', 'quiz'].includes(id))) f(depuisRetour, entrer.param); entrer.param = null; if (!depuisRetour) el(id).scrollTop = 0; }
+const DYN = ['collection', 'bobine-1er', 'fiche', 'profil', 'mes-bobines', 'accueil'], rendu = {};
+function remplace(id) { const old = el(id); const tmp = document.createElement('div'); tmp.innerHTML = E[id](); const nu = tmp.firstElementChild; nu.hidden = old.hidden; nu.style.cssText = old.style.cssText; old.replaceWith(nu); }
+function entrer(id, depuisRetour) { if (DYN.includes(id) && rendu[id] !== S.v) { remplace(id); rendu[id] = S.v; } majPieces(); majPhoto(); const f = entrees[id]; if (f && !(depuisRetour && ['cassette', 'arrondissement', 'quiz'].includes(id))) f(depuisRetour, entrer.param); entrer.param = null; if (!depuisRetour) el(id).scrollTop = 0; }
 
 /* --- scan --- */
 function modeScan(m) {
@@ -942,58 +978,364 @@ function bsSuite() {
     : billetMinuteur('Palais-Royal, défi 4 sur 5', "On te prévient dès qu'il est prêt.", 'var(--fig)', '12:00')) + prog;
 }
 
-/* --- carte --- */
+/* --- carte interactive --- */
 let svgPlan = null;
 const ARR = Array.from({ length: 20 }, (_, i) => i === 0 ? '1er' : (i + 1) + 'e');
+const NOMS = { '1er': 'Louvre', '2e': 'Bourse', '3e': 'Temple', '4e': 'Hôtel-de-Ville', '5e': 'Panthéon', '6e': 'Luxembourg', '7e': 'Palais-Bourbon', '8e': 'Élysée', '9e': 'Opéra', '10e': 'Entrepôt', '11e': 'Popincourt', '12e': 'Reuilly', '13e': 'Gobelins', '14e': 'Observatoire', '15e': 'Vaugirard', '16e': 'Passy', '17e': 'Batignolles-Monceau', '18e': 'Butte-Montmartre', '19e': 'Buttes-Chaumont', '20e': 'Ménilmontant' };
+const TOTAUX = { '1er': 12, '2e': 6, '3e': 6, '4e': 12, '5e': 10, '6e': 8, '7e': 11, '8e': 14, '9e': 10, '10e': 12, '11e': 11, '12e': 10, '13e': 11, '14e': 6, '15e': 7, '16e': 18, '17e': 7, '18e': 17, '19e': 13, '20e': 11 };
+/* Lieux trouvés, aux coordonnées du jeu de données des tournages (Ville de Paris). n = défis réussis sur 5, att = attente avant le prochain défi. */
+const LIEUX = [
+  { id: 'estrapade', a: '5e', l: "Place de l'Estrapade", f: 'Emily in Paris', d: '12 octobre', lat: 48.84507, lon: 2.34495, n: 3, att: '11:58' },
+  { id: 'saint-bernard', a: '5e', l: 'Quai Saint-Bernard', f: 'Chefs', d: '13 octobre', lat: 48.84778, lon: 2.35953, n: 1 },
+  { id: 'fosses', a: '5e', l: 'Rue des Fossés-Saint-Jacques', f: 'Validé', d: '15 octobre', lat: 48.84555, lon: 2.34390, n: 2 },
+  { id: 'moustaki', a: '5e', l: 'Place Georges-Moustaki', f: 'Stella est amoureuse', d: '19 octobre', lat: 48.83941, lon: 2.35022, n: 1 },
+  { id: 'cuvier', a: '5e', l: 'Rue Cuvier', f: 'Astrid et Raphaëlle', d: '22 octobre', lat: 48.84472, lon: 2.35693, n: 1 },
+  { id: 'sainte-genevieve', a: '5e', l: 'Place Sainte-Geneviève', f: 'Lupin', d: '29 octobre', lat: 48.84660, lon: 2.34694, n: 2, att: '4:20' },
+  { id: 'valois', a: '1er', l: 'Place de Valois', f: 'Le Comte de Monte-Cristo', d: '9 octobre', lat: 48.86342, lon: 2.33833, n: 1 },
+  { id: 'dauphine', a: '1er', l: 'Place Dauphine', f: 'Dix pour cent', d: '18 octobre', lat: 48.85635, lon: 2.34245, n: 1, att: '6:00' },
+  { id: 'pont-neuf', a: '1er', l: 'Pont-Neuf', f: 'Lupin', d: '24 octobre', lat: 48.85790, lon: 2.34130, n: 1 },
+  { id: 'palais-royal', a: '1er', l: 'Jardin du Palais-Royal', f: 'Emily in Paris', d: '29 octobre', lat: 48.86480, lon: 2.33770, n: 3, att: '12:00', gagne: true },
+  { id: 'francs-bourgeois', a: '3e', l: 'Rue des Francs-Bourgeois', f: 'Family Business', d: '8 octobre', lat: 48.85882, lon: 2.35876, n: 1 },
+  { id: 'notre-dame', a: '4e', l: 'Parvis Notre-Dame', f: 'Notre-Dame brûle', d: '10 octobre', lat: 48.85357, lon: 2.34742, n: 2 },
+  { id: 'bourbon', a: '4e', l: 'Quai de Bourbon', f: 'The New Look', d: '21 octobre', lat: 48.85344, lon: 2.35374, n: 1 },
+  { id: 'apollinaire', a: '6e', l: 'Rue Guillaume-Apollinaire', f: 'Irma Vep', d: '11 octobre', lat: 48.85463, lon: 2.33330, n: 1 },
+  { id: 'stanislas', a: '6e', l: 'Rue Stanislas', f: 'Furies', d: '16 octobre', lat: 48.84426, lon: 2.32864, n: 1 },
+  { id: 'saint-sulpice', a: '6e', l: 'Place Saint-Sulpice', f: 'Paris Police 1900', d: '26 octobre', lat: 48.85100, lon: 2.33460, n: 1 },
+  { id: 'orsay', a: '7e', l: "Quai d'Orsay", f: 'Tikkoun', d: '14 octobre', lat: 48.86258, lon: 2.31041, n: 1 },
+  { id: 'louise-michel', a: '18e', l: 'Square Louise-Michel', f: 'Skam France', d: '6 octobre', lat: 48.88560, lon: 2.34300, n: 1 }
+];
+const MOI = { lat: 48.84270, lon: 2.34985 }; // Antoine, rue Mouffetard
+/* Calage du plan Figma sur les coordonnées GPS (écart mesuré : 2,5 px) */
+const geo = (lat, lon) => [5089.784 * lon - 11319.241, -7726.751 * lat + 377855.815];
+const VUE_PARIS = { x0: 190, y0: 5, x1: 1065, y1: 668 };
+const SEUIL_ETIQ = 0.8;
+const C = { s: 1, tx: 0, ty: 0, pret: false, mode: 'paris', arr: null, lieu: null, anim: 0, inertie: 0, attentePR: false, smin: .3, smax: 8 };
+const BOX = {}, POS_ETIQ = {};
+let vue, svgM, cam, gSel, gEtiq, gPts, gMoi, gPin;
+const echelles = [];
+const $c = id => document.getElementById(id);
+const lieuxVisibles = () => LIEUX.filter(l => !l.gagne || S.pr);
+const trouves = a => lieuxVisibles().filter(l => l.a === a);
+const nDefis = l => l.id === 'palais-royal' ? S.prDefis : l.n;
+const attente = l => (nDefis(l) >= 5 ? null : l.att || null);
+const niveau = n => n <= 2 ? 'facile' : n === 3 ? 'moyen' : 'difficile';
+const etatLieu = l => { const n = nDefis(l); if (n >= 5) return 'Lieu terminé, 5 défis sur 5'; const a = attente(l); return a ? `${l.f}, prochain défi dans ${parseInt(a, 10)} h` : `${l.f}, un défi t'attend`; };
+const reduit = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const attendre = ms => new Promise(r => plus('carte', r, ms));
+
 async function chargePlan() {
   if (svgPlan) return svgPlan;
   if (window.PLAN_SVG) { svgPlan = window.PLAN_SVG; return svgPlan; }
   try { const r = await fetch('img/plan.svg'); svgPlan = await r.text(); } catch (e) { svgPlan = ''; }
   return svgPlan;
 }
-async function plan(id) {
-  const box = document.getElementById('plan-' + (id === 'carte' ? 'paris' : id));
-  if (!box.dataset.pret) {
-    const txt = await chargePlan(); if (!txt) { box.innerHTML = '<p class="pad petit doux">La carte n\'a pas pu se charger.</p>'; return; }
-    box.innerHTML = txt;
-    const svg = box.querySelector('svg'); const z = +box.dataset.zoom;
-    svg.setAttribute('width', Math.round(1252 * z)); svg.setAttribute('height', Math.round(673 * z));
-    svg.style.margin = `${MARGE}px`;
-    if (id === 'carte') { const et = svg.querySelector('[id$="tiquettes"]'); if (et) et.style.display = 'none'; }
-    const lab = svg.querySelector('[id="3/12"]');
-    if (lab) { const bb = lab.getBBox(); lab.style.display = 'none'; lab.insertAdjacentHTML('afterend', `<text x="${bb.x}" y="${bb.y + bb.height}" font-family="Barlow, sans-serif" font-weight="600" font-size="${bb.height * 1.35}" fill="#29100C">4/12</text>`); }
-    const g = svg.querySelector('g') || svg;
-    g.insertAdjacentHTML('beforeend', `<g id="rep-pr"><circle class="rep-halo" cx="585" cy="282" r="14" fill="#BFB065"/><circle class="rep-point" cx="585" cy="282" r="7" fill="#53461C" stroke="#E5E3DA" stroke-width="2"/></g>`);
-    const sel = id === 'carte-1er' ? '1er' : (id === 'carte-5e' || id === 'spot') ? '5e' : null;
-    if (sel) { const p = svg.querySelector(`[id="${sel} arrondissement"]`); if (p) { const c = p.cloneNode(); c.removeAttribute('id'); c.setAttribute('fill', 'none'); c.setAttribute('stroke', '#5A1D22'); c.setAttribute('stroke-width', '3'); c.style.pointerEvents = 'none'; const et = svg.querySelector('[id$="tiquettes"]'); (et ? et.parentNode.insertBefore(c, et) : svg.querySelector('g').appendChild(c)); } }
-    if (id === 'spot') svg.querySelector('g').insertAdjacentHTML('beforeend', `<g transform="translate(650 425)" style="pointer-events:none"><rect x="-74" y="-62" width="148" height="24" rx="12" fill="#F3F1EB" stroke="#29100C"/><text x="0" y="-45" text-anchor="middle" font-family="Barlow, sans-serif" font-weight="600" font-size="12.5" fill="#29100C">Place de l'Estrapade</text><circle r="17" fill="#5A1D22" stroke="#E5E3DA" stroke-width="2.5"/><path d="M0 9s-6-5.3-6-9.8a6 6 0 0 1 12 0C6 3.7 0 9 0 9z" fill="none" stroke="#E5E3DA" stroke-width="1.6"/><circle cy="-1" r="2" fill="#E5E3DA"/></g>`);
-    ARR.forEach(a => {
-      const cible = a === '1er' ? 'carte-1er' : a === '5e' ? 'carte-5e' : null;
-      [svg.querySelector(`[id="${a} arrondissement"]`), svg.querySelector(`[id="${a}"]`)].forEach(n => n && n.addEventListener('click', () => {
-        if (cible && cible !== id) aller(cible, 'fade');
-        else if (!cible) toast(`Dans la démo, seules les cartes du 1er et du 5e sont détaillées.`);
-      }));
-    });
-    box.dataset.pret = 1;
-  }
-  const [cx, cy] = box.dataset.centre.split(',').map(Number); const z = +box.dataset.zoom;
-  requestAnimationFrame(() => { box.scrollLeft = MARGE + cx * z - box.clientWidth / 2; box.scrollTop = MARGE + cy * z - (id === 'carte' ? box.clientHeight / 2 : Math.min(250, box.clientHeight * .3)); });
+const NS = 'http://www.w3.org/2000/svg';
+const nouv = (tag, attrs = {}, parent) => { const n = document.createElementNS(NS, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); if (parent) parent.appendChild(n); return n; };
+
+async function carteInit() {
+  if (C.pret) return true;
+  vue = $c('carte-vue');
+  const txt = await chargePlan();
+  if (!txt) { vue.innerHTML = '<p class="pad petit doux" style="padding-top:140px">La carte n\'a pas pu se charger.</p>'; return false; }
+  vue.innerHTML = txt;
+  svgM = vue.querySelector('svg');
+  svgM.removeAttribute('width'); svgM.removeAttribute('height'); svgM.removeAttribute('viewBox');
+  cam = nouv('g', { id: 'cam' });
+  while (svgM.firstChild) cam.appendChild(svgM.firstChild);
+  svgM.appendChild(cam);
+  // étiquettes et points de Figma : on garde leur position, on les redessine en vrai texte
+  const etiqFig = svgM.querySelector('[id$="tiquettes"]');
+  ARR.forEach(a => {
+    const p = svgM.querySelector(`[id="${a} arrondissement"]`);
+    p.dataset.arr = a; p.setAttribute('vector-effect', 'non-scaling-stroke'); p.classList.add('m-arr');
+    const b = p.getBBox(); BOX[a] = { x0: b.x, y0: b.y, x1: b.x + b.width, y1: b.y + b.height };
+    const g = etiqFig && etiqFig.querySelector(`g[id="${a}"]`);
+    if (g) { const e = g.getBBox(); POS_ETIQ[a] = [e.x + e.width / 2, e.y + e.height / 2]; } else POS_ETIQ[a] = [(BOX[a].x0 + BOX[a].x1) / 2, (BOX[a].y0 + BOX[a].y1) / 2];
+  });
+  if (etiqFig) etiqFig.remove();
+  const ptsFig = svgM.querySelector('g[id^="lieux"]'); if (ptsFig) ptsFig.remove();
+  gSel = nouv('path', { id: 'm-sel', fill: 'none', stroke: '#5A1D22', 'stroke-width': 3, 'vector-effect': 'non-scaling-stroke', 'pointer-events': 'none' }, cam);
+  gEtiq = nouv('g', { id: 'm-etiq' }, cam);
+  gPts = nouv('g', { id: 'm-pts' }, cam);
+  gMoi = nouv('g', { id: 'm-moi', 'pointer-events': 'none' }, cam);
+  gPin = nouv('g', { id: 'm-pin', 'pointer-events': 'none' }, cam);
+  const [mx, my] = geo(MOI.lat, MOI.lon);
+  gMoi.innerHTML = '<circle class="moi-halo" r="11" fill="#1F4D3A" opacity=".3"/><circle r="7" fill="#1F4D3A" stroke="#F3F1EB" stroke-width="2.5"/>';
+  echelles.push({ el: gMoi, x: mx, y: my });
+  gPin.innerHTML = '<g class="pin-in"><rect class="pin-lb" y="-52" height="26" rx="13" fill="#F3F1EB" stroke="#29100C"/><text class="pin-tx" y="-34" text-anchor="middle" font-family="Barlow, sans-serif" font-weight="600" font-size="13" fill="#29100C"></text><circle r="17" fill="#5A1D22" stroke="#E5E3DA" stroke-width="2.5"/><path d="M0 9s-6-5.3-6-9.8a6 6 0 0 1 12 0C6 3.7 0 9 0 9z" fill="none" stroke="#E5E3DA" stroke-width="1.6"/><circle cy="-1" r="2" fill="#E5E3DA"/></g>';
+  gPin.style.display = 'none';
+  dessinerEtiquettes(); dessinerPoints();
+  gestes();
+  C.pret = true;
+  return true;
 }
-const MARGE = 700;
-function lieuValide() {
-  const volet = document.getElementById('volet-1er'), t = document.getElementById('toast-carte-1er');
-  const box = document.getElementById('plan-carte-1er');
-  if (!S.valide) { volet.style.opacity = 1; volet.style.transform = 'none'; t.style.opacity = 0; return; }
-  S.valide = false;
-  volet.style.transition = 'none'; volet.style.opacity = 0; volet.style.transform = 'translateY(30px)';
-  const go = () => {
-    const svg = box.querySelector('svg'); if (!svg) return setTimeout(go, 100);
-    svg.classList.add('valide-start'); svg.classList.remove('pulse');
-    plus('carte-1er', () => { svg.classList.remove('valide-start'); svg.classList.add('pulse'); t.style.opacity = 1; t.style.transform = 'none'; navigator.vibrate?.([20, 60, 20]); }, 350);
-    plus('carte-1er', () => { t.style.opacity = 0; t.style.transform = 'translateY(14px)'; volet.style.transition = ''; volet.style.opacity = 1; volet.style.transform = 'none'; }, 2600);
+
+function dessinerEtiquettes(bump) {
+  gEtiq.innerHTML = '';
+  for (let i = echelles.length - 1; i >= 0; i--) if (echelles[i].type === 'etiq') echelles.splice(i, 1);
+  ARR.forEach(a => {
+    let n = trouves(a).length; if (C.attentePR && a === '1er') n--;
+    const g = nouv('g', { class: 'm-etiq', 'data-arr': a }, gEtiq);
+    const lb = nouv('g', { class: 'lb' + (bump === a ? ' bump' : '') }, g);
+    const r = nouv('rect', { height: 22, y: -11, rx: 11, fill: n ? '#F3F1EB' : '#FBFAF6', stroke: '#29100C', 'stroke-width': 1 }, lb);
+    const t = nouv('text', { y: 4.5, 'text-anchor': 'middle', fill: '#29100C' }, lb);
+    t.innerHTML = `<tspan font-family="DM Serif Display, serif" font-size="13">${a}</tspan><tspan dx="5" font-family="Barlow, sans-serif" font-weight="600" font-size="11" fill="${n ? '#29100C' : '#6C5D57'}">${n}/${TOTAUX[a]}</tspan>`;
+    const w = Math.ceil(t.getComputedTextLength ? t.getComputedTextLength() : 50) + 18;
+    r.setAttribute('width', w); r.setAttribute('x', -w / 2);
+    echelles.push({ el: g, x: POS_ETIQ[a][0], y: POS_ETIQ[a][1], type: 'etiq' });
+  });
+  applique();
+}
+function dessinerPoints() {
+  gPts.innerHTML = '';
+  for (let i = echelles.length - 1; i >= 0; i--) if (echelles[i].type === 'pt') echelles.splice(i, 1);
+  lieuxVisibles().forEach(l => {
+    const [x, y] = geo(l.lat, l.lon);
+    const g = nouv('g', { class: 'm-pt' + (C.attentePR && l.gagne ? ' attend' : ''), 'data-lieu': l.id }, gPts);
+    g.innerHTML = '<g class="pt"><circle class="onde" r="9" fill="#BFB065"/><circle class="onde o2" r="9" fill="#BFB065"/><circle r="16" fill="transparent"/><circle class="pt-c" r="6.5" fill="#29100C" stroke="#F3F1EB" stroke-width="2"/></g>';
+    echelles.push({ el: g, x, y, type: 'pt' });
+  });
+  applique();
+}
+
+/* Caméra */
+const zone = () => {
+  const W = vue.offsetWidth, H = vue.offsetHeight;
+  const haut = $c('carte-haut').offsetHeight + 6;
+  const f = $c('carte-feuille');
+  const bas = f.classList.contains('cache') ? H - tabbar.offsetHeight : f.offsetTop;
+  return { x0: 14, y0: haut, x1: W - 14, y1: Math.max(haut + 140, bas - 10) };
+};
+const borne = s => Math.min(C.smax, Math.max(C.smin, s));
+function applique() {
+  if (!cam) return;
+  const W = vue.offsetWidth, H = vue.offsetHeight;
+  // le centre de l'écran reste dans Paris
+  const cx = Math.min(1252, Math.max(0, (W / 2 - C.tx) / C.s)), cy = Math.min(673, Math.max(0, (H / 2 - C.ty) / C.s));
+  C.tx = W / 2 - cx * C.s; C.ty = H / 2 - cy * C.s;
+  cam.setAttribute('transform', `matrix(${C.s} 0 0 ${C.s} ${C.tx} ${C.ty})`);
+  const k = 1 / C.s, kp = k * Math.min(1, .62 + C.s * .32); // les points grossissent un peu avec le zoom
+  for (const o of echelles) o.el.setAttribute('transform', `translate(${o.x} ${o.y}) scale(${o.type === 'pt' ? kp : k})`);
+  const vis = C.s >= SEUIL_ETIQ;
+  gEtiq.style.opacity = vis ? 1 : 0; gEtiq.style.pointerEvents = vis ? 'auto' : 'none';
+}
+function stopAnim() { cancelAnimationFrame(C.anim); cancelAnimationFrame(C.inertie); C.anim = C.inertie = 0; }
+function volerVers(wx, wy, s, d = 650) {
+  const z = zone(), px = (z.x0 + z.x1) / 2, py = (z.y0 + z.y1) / 2;
+  const c0x = (px - C.tx) / C.s, c0y = (py - C.ty) / C.s, s0 = C.s;
+  s = borne(s); stopAnim();
+  if (!d || reduit) { C.s = s; C.tx = px - wx * s; C.ty = py - wy * s; applique(); return Promise.resolve(); }
+  return new Promise(res => {
+    const t0 = performance.now();
+    const pas = t => {
+      const k = Math.min(1, (t - t0) / d), e = k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+      const ss = Math.exp(Math.log(s0) + (Math.log(s) - Math.log(s0)) * e);
+      C.s = ss; C.tx = px - (c0x + (wx - c0x) * e) * ss; C.ty = py - (c0y + (wy - c0y) * e) * ss; applique();
+      if (k < 1) C.anim = requestAnimationFrame(pas); else { C.anim = 0; res(); }
+    };
+    C.anim = requestAnimationFrame(pas);
+  });
+}
+function cadrer(b, marge = .9, d = 650, sMax = 7) {
+  const z = zone();
+  const s = Math.min((z.x1 - z.x0) / (b.x1 - b.x0), (z.y1 - z.y0) / (b.y1 - b.y0)) * marge;
+  return volerVers((b.x0 + b.x1) / 2, (b.y0 + b.y1) / 2, Math.min(s, sMax), d);
+}
+function zoomAutour(x, y, s) { s = borne(s); const wx = (x - C.tx) / C.s, wy = (y - C.ty) / C.s; C.s = s; C.tx = x - wx * s; C.ty = y - wy * s; applique(); }
+
+/* Gestes : glisser, pincer, molette, toucher */
+function gestes() {
+  const P = new Map(); let base = null, tap = null, vit = null;
+  const loc = e => { const r = vue.getBoundingClientRect(), k = vue.offsetWidth / r.width; return [(e.clientX - r.left) * k, (e.clientY - r.top) * k]; };
+  const etat = () => { const ps = [...P.values()]; if (ps.length === 1) return { cx: ps[0][0], cy: ps[0][1], d: 1, s: C.s, tx: C.tx, ty: C.ty }; const [a, b] = ps; return { cx: (a[0] + b[0]) / 2, cy: (a[1] + b[1]) / 2, d: Math.max(1, Math.hypot(a[0] - b[0], a[1] - b[1])), s: C.s, tx: C.tx, ty: C.ty }; };
+  vue.addEventListener('pointerdown', e => {
+    if (e.button > 0) return;
+    try { vue.setPointerCapture(e.pointerId); } catch (er) {}
+    const p = loc(e); P.set(e.pointerId, p); stopAnim();
+    tap = P.size === 1 ? { x: p[0], y: p[1], t: performance.now(), cible: e.target, bouge: false } : null;
+    base = etat(); vit = null;
+  });
+  vue.addEventListener('pointermove', e => {
+    if (!P.has(e.pointerId)) return;
+    const prev = P.get(e.pointerId), p = loc(e); P.set(e.pointerId, p);
+    if (tap && Math.hypot(p[0] - tap.x, p[1] - tap.y) > 8) tap.bouge = true;
+    if (!base || (tap && !tap.bouge)) return;
+    const g = etat();
+    if (P.size === 1) { C.tx = base.tx + g.cx - base.cx; C.ty = base.ty + g.cy - base.cy; const t = performance.now(); vit = { vx: p[0] - prev[0], vy: p[1] - prev[1], t }; }
+    else { const s = borne(base.s * g.d / base.d), wx = (base.cx - base.tx) / base.s, wy = (base.cy - base.ty) / base.s; C.s = s; C.tx = g.cx - wx * s; C.ty = g.cy - wy * s; }
+    applique();
+  });
+  const fin = e => {
+    if (!P.has(e.pointerId)) return;
+    P.delete(e.pointerId);
+    if (P.size) { base = etat(); tap = null; return; }
+    base = null;
+    if (tap && !tap.bouge && performance.now() - tap.t < 600) toucher(tap.cible, tap.x, tap.y);
+    else if (vit && performance.now() - vit.t < 80 && Math.hypot(vit.vx, vit.vy) > 2) elan(vit.vx, vit.vy);
+    tap = null; vit = null;
   };
-  go();
+  vue.addEventListener('pointerup', fin); vue.addEventListener('pointercancel', fin);
+  vue.addEventListener('wheel', e => { e.preventDefault(); stopAnim(); const [x, y] = loc(e); zoomAutour(x, y, C.s * Math.exp(-e.deltaY * (e.ctrlKey ? .01 : .0018))); }, { passive: false });
+  vue.addEventListener('dblclick', e => { const [x, y] = loc(e); const wx = (x - C.tx) / C.s, wy = (y - C.ty) / C.s; volerVers(wx, wy, C.s * 1.8, 300); });
+  // Safari : empêcher le zoom de la page par geste
+  ['gesturestart', 'gesturechange'].forEach(t => vue.addEventListener(t, e => e.preventDefault()));
 }
+function elan(vx, vy) {
+  const pas = () => { vx *= .92; vy *= .92; C.tx += vx; C.ty += vy; applique(); if (Math.hypot(vx, vy) > .4) C.inertie = requestAnimationFrame(pas); else C.inertie = 0; };
+  C.inertie = requestAnimationFrame(pas);
+}
+function toucher(t, x, y) {
+  const pt = t.closest && t.closest('[data-lieu]');
+  if (pt) {
+    const l = LIEUX.find(o => o.id === pt.dataset.lieu);
+    if (C.s < SEUIL_ETIQ && C.mode === 'paris') return voirArr(l.a); // vue d'ensemble : on ouvre d'abord l'arrondissement
+    const proches = lieuxVisibles().map(o => geo(o.lat, o.lon)).filter(([wx, wy]) => Math.hypot(wx * C.s + C.tx - x, wy * C.s + C.ty - y) < 18);
+    if (proches.length > 1 && C.s < C.smax / 2) { // plusieurs lieux sous le doigt : on zoome dessus
+      const cx = proches.reduce((n, p) => n + p[0], 0) / proches.length, cy = proches.reduce((n, p) => n + p[1], 0) / proches.length;
+      return volerVers(cx, cy, C.s * 2.6, 450);
+    }
+    return voirLieu(l.id);
+  }
+  const ar = t.closest && t.closest('[data-arr]'); if (ar) return voirArr(ar.dataset.arr);
+  if (C.mode !== 'paris') voirParis();
+}
+
+/* Interface autour de la carte */
+function modeHaut(m) { $c('carte-haut').dataset.mode = m; }
+function selArr(a) { if (!a) { gSel.setAttribute('d', ''); return; } gSel.setAttribute('d', svgM.querySelector(`[id="${a} arrondissement"]`).getAttribute('d')); }
+function pin(l) {
+  gPts.querySelectorAll('.m-pt').forEach(p => p.classList.toggle('sel', !!l && p.dataset.lieu === l.id));
+  const i = echelles.findIndex(o => o.el === gPin); if (i >= 0) echelles.splice(i, 1);
+  if (!l) { gPin.style.display = 'none'; return; }
+  const [x, y] = geo(l.lat, l.lon);
+  gPin.style.display = '';
+  const tx = gPin.querySelector('.pin-tx'); tx.textContent = l.l;
+  const w = Math.ceil(tx.getComputedTextLength()) + 24; const r = gPin.querySelector('.pin-lb'); r.setAttribute('width', w); r.setAttribute('x', -w / 2);
+  const inn = gPin.querySelector('.pin-in'); inn.classList.remove('tombe'); void inn.getBBox(); inn.classList.add('tombe');
+  echelles.push({ el: gPin, x, y }); applique();
+}
+function feuille(html) {
+  const f = $c('carte-feuille');
+  f.classList.remove('replie');
+  if (!html) { f.classList.add('cache'); outils(); return; }
+  const deja = !f.classList.contains('cache') && f.innerHTML;
+  f.innerHTML = html; f.scrollTop = 0; f.classList.remove('cache');
+  if (deja && !reduit) f.animate([{ opacity: .3, transform: 'translateY(18px)' }, { opacity: 1, transform: 'none' }], { duration: 260, easing: 'ease-out' });
+  outils();
+}
+function outils() {
+  const f = $c('carte-feuille'), o = $c('carte-outils');
+  f.style.bottom = (tabbar.offsetHeight - 22) + 'px';
+  const bas = f.classList.contains('cache') ? vue.offsetHeight - tabbar.offsetHeight : f.offsetTop;
+  o.style.top = Math.max($c('carte-haut').offsetHeight + 8, bas - o.offsetHeight - 14) + 'px';
+}
+const ligneLieu = l => `<button class="ligne-lieu" data-lieu="${l.id}"><span class="ok">${ic('check', 2.4)}</span><div><p style="font:600 16px var(--f-texte);margin:0">${l.l}</p><p class="petit doux">${etatLieu(l)}</p></div>${ic('chev').replace('<svg', '<svg class="chev"')}</button>`;
+const poignee = '<button class="poignee" data-carte="replier" aria-label="Replier ou déplier"></button>';
+function htmlParis() {
+  return `${poignee}<div class="legende">${[['#F1EFE7', 'Pas commencé'], ['#E8E2B9', 'Entamé'], ['#C8B867', 'Avancé'], ['#53461C', 'Complet']].map(([c, t]) => `<span class="mini"><i style="background:${c}"></i>${t}</span>`).join('')}</div>
+    <div><h2 class="t-l">${20 - new Set(lieuxVisibles().map(l => l.a)).size} arrondissements à ouvrir</h2><p class="petit doux">Touche un arrondissement pour voir tes lieux.</p></div>`;
+}
+function htmlArr(a) {
+  const L = trouves(a), t = TOTAUX[a];
+  const bouton = a === '1er' || a === '5e' ? btn(`Ma bobine du ${a}`, 'b-sec', `data-go="bobine-${a}"`) : btn('Mes cassettes', 'b-sec', 'data-tabgo="collection"');
+  return `${poignee}<div style="display:flex;justify-content:space-between;align-items:center;gap:12px">${plaque(a, NOMS[a])}<p style="margin:0;white-space:nowrap"><b class="num" style="font:400 30px var(--f-titre);color:var(--oxblood)">${L.length}</b> <span class="petit doux">/ ${t} plaques</span></p></div>
+    <div class="jauge"><i style="width:${L.length / t * 100}%"></i></div>
+    ${L.length ? `<p class="mini" style="color:var(--oxblood)">Tes lieux trouvés</p>${L.map(ligneLieu).join('')}${bouton}`
+      : `<div><p class="corps">Aucune plaque trouvée dans le ${a} pour l'instant.</p><p class="petit doux">${t} plaques t'attendent ici. Ouvre l'œil en te baladant.</p></div>${btn('Scanner une plaque', 'b-prin', 'data-tabgo="scan"')}`}`;
+}
+function htmlLieu(l) {
+  const n = nDefis(l), a = attente(l);
+  const dots = [1, 2, 3, 4, 5].map(i => i <= n ? `<span class="fait">${ic('check', 2.4)}</span>` : i === n + 1 ? (a ? `<span style="background:#EDE6B8">${ic('clock')}</span>` : `<span class="cour">${i}</span>`) : `<span style="border-style:dashed;opacity:.6">${ic('lock')}</span>`).join('');
+  const suite = n >= 5 ? `<div class="billet-fin">${ic('clap')}<div><p class="t-s">Clap de fin</p><p class="petit">Les 5 défis de ce lieu sont faits.</p></div></div>`
+    : a ? billetMinuteur(`Défi ${n + 1} sur 5, niveau ${niveau(n + 1)}`, "Il apparaîtra ici dès qu'il est prêt.", 'var(--parcel)', a)
+    : `<div class="billet-fin" style="background:var(--surface)">${ic('play')}<div><p class="t-s">Défi ${n + 1} sur 5 disponible</p><p class="petit doux">Retourne devant la plaque et scanne-la pour jouer.</p></div></div>`;
+  const second = l.id === 'palais-royal' && S.bobinePR ? btn('Mon souvenir', 'b-prin', 'data-go="souvenir"') : l.a === '1er' || l.a === '5e' ? btn('Ma bobine', 'b-prin', `data-go="bobine-${l.a}"`) : btn('Mes cassettes', 'b-prin', 'data-tabgo="collection"');
+  return `${poignee}<div style="display:flex;gap:8px;align-items:center"><button class="chip on" data-arr-go="${l.a}">${l.a} arr.</button><span class="petit doux">Trouvée le ${l.d}</span></div>
+    <div><h2 class="t-l">${l.l}</h2><p class="petit doux" style="display:flex;gap:6px;align-items:center;margin-top:4px">${ic('film').replace('<svg', '<svg width="16" height="16"')}${l.f}</p></div>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><div class="defis">${dots}</div><p class="petit doux">${n} défi${n > 1 ? 's' : ''} sur 5 réussi${n > 1 ? 's' : ''}</p></div>
+    ${suite}
+    <div style="display:flex;gap:12px"><a class="btn b-contour" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(l.l + ', Paris')}" target="_blank" rel="noopener">Itinéraire</a>${second}</div>`;
+}
+function sousTitre() { const L = lieuxVisibles().length - (C.attentePR ? 1 : 0), A = new Set(lieuxVisibles().map(l => l.a)).size; $c('carte-sous').textContent = `${L} lieux trouvés dans ${A} arrondissements`; }
+
+function voirParis(d = 650) { C.mode = 'paris'; C.arr = C.lieu = null; modeHaut('paris'); finRecherche(true); selArr(null); pin(null); sousTitre(); feuille(htmlParis()); return cadrer(VUE_PARIS, .98, d); }
+function voirArr(a, d = 650) { C.mode = 'arr'; C.arr = a; C.lieu = null; modeHaut('focus'); finRecherche(true); selArr(a); pin(null); feuille(htmlArr(a)); const b = BOX[a], m = Math.max(b.x1 - b.x0, b.y1 - b.y0) * .08; return cadrer({ x0: b.x0 - m, y0: b.y0 - m, x1: b.x1 + m, y1: b.y1 + m }, .95, d, 4.5); }
+function voirLieu(id, d = 650) {
+  const l = LIEUX.find(x => x.id === id); if (!l) return;
+  C.mode = 'lieu'; C.arr = l.a; C.lieu = id; modeHaut('focus'); finRecherche(true); selArr(l.a); feuille(htmlLieu(l)); pin(l);
+  const [x, y] = geo(l.lat, l.lon); return volerVers(x, y, Math.max(C.s, 3.4), d);
+}
+function retourCarte() { if (C.mode === 'recherche') return finRecherche(); if (C.mode === 'lieu') return voirArr(C.arr); return voirParis(); }
+
+/* Recherche parmi les lieux déjà trouvés */
+let avantRecherche = null;
+function debutRecherche() { if (C.mode !== 'recherche') avantRecherche = { mode: C.mode, arr: C.arr, lieu: C.lieu }; C.mode = 'recherche'; modeHaut('focus'); chercher(); }
+function chercher() {
+  const q = ($c('carte-q').value || '').trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  const n = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  const L = lieuxVisibles().filter(l => !q || n(l.l + ' ' + l.f + ' ' + l.a + ' ' + NOMS[l.a]).includes(q));
+  const r = $c('carte-resultats'); r.hidden = false; r.style.top = ($c('carte-haut').offsetHeight + 2) + 'px';
+  r.innerHTML = L.length ? `<p class="mini" style="color:var(--oxblood)">${q ? `${L.length} résultat${L.length > 1 ? 's' : ''}` : 'Tes lieux trouvés'}</p>${L.map(l => `<button class="ligne-lieu" data-lieu="${l.id}"><span class="ok">${ic('pin', 2)}</span><div><p style="font:600 16px var(--f-texte);margin:0">${l.l}</p><p class="petit doux">${l.f}, ${l.a}</p></div>${ic('chev').replace('<svg', '<svg class="chev"')}</button>`).join('')}`
+    : `<p class="corps">Rien trouvé pour « ${$c('carte-q').value.trim()} ».</p><p class="petit doux">Seuls les lieux que tu as déjà trouvés sont sur ta carte.</p>`;
+}
+function finRecherche(silencieux) {
+  const r = $c('carte-resultats'); if (r) r.hidden = true;
+  const q = $c('carte-q'); if (q) { q.value = ''; q.blur(); }
+  if (silencieux || C.mode !== 'recherche') return;
+  const p = avantRecherche || { mode: 'paris' }; avantRecherche = null;
+  if (p.mode === 'lieu') voirLieu(p.lieu); else if (p.mode === 'arr') voirArr(p.arr); else voirParis();
+}
+
+/* Animation : le lieu gagné apparaît sur la carte */
+async function revelerPR() {
+  const valide = S.prDefis >= 5;
+  progres({ pr: true, aReveler: false });
+  C.attentePR = true; dessinerEtiquettes(); dessinerPoints();
+  C.mode = 'paris'; modeHaut('paris'); sousTitre(); selArr(null); pin(null); feuille(null);
+  await cadrer(VUE_PARIS, .98, 0);
+  await attendre(500);
+  const l = LIEUX.find(x => x.id === 'palais-royal'), [x, y] = geo(l.lat, l.lon);
+  selArr('1er');
+  await volerVers(x, y, 2.3, 1300);
+  C.attentePR = false; dessinerEtiquettes('1er'); dessinerPoints(); sousTitre();
+  const g = gPts.querySelector('[data-lieu="palais-royal"]'); if (g) g.classList.add('pop');
+  navigator.vibrate?.([25, 60, 25]);
+  const b = $c('carte-bandeau');
+  b.innerHTML = `<span style="color:var(--chartreuse)">${ic(valide ? 'medal' : 'pin').replace('<svg', '<svg width="22" height="22"')}</span><div><p style="font:600 16px var(--f-texte);margin:0">${valide ? 'Lieu validé' : 'Nouveau lieu sur ta carte'}</p><p class="petit" style="opacity:.85">${valide ? 'Jardin du Palais-Royal, 5 défis sur 5' : 'Jardin du Palais-Royal, 1er'}</p></div>`;
+  b.style.top = ($c('carte-haut').offsetHeight + 8) + 'px';
+  b.classList.add('vu');
+  await attendre(2400);
+  b.classList.remove('vu');
+  await attendre(250);
+  if (pile.at(-1)?.id === 'carte') voirLieu('palais-royal', 500);
+}
+
+async function carteEntrer(param) {
+  if (!(await carteInit())) return;
+  outils();
+  if (S.aReveler) return revelerPR();
+  if (param && param.lieu) return voirLieu(param.lieu, 0);
+  if (param && param.arr) return voirArr(param.arr, 0);
+  if (param && param.paris) return voirParis();
+  // retour sur l'onglet : on garde la vue, mais on la remet à jour
+  dessinerEtiquettes(); dessinerPoints(); sousTitre();
+  if (C.mode === 'lieu') { feuille(htmlLieu(LIEUX.find(x => x.id === C.lieu))); pin(LIEUX.find(x => x.id === C.lieu)); }
+  else if (C.mode === 'arr') feuille(htmlArr(C.arr));
+  else if (C.vu) feuille(htmlParis());
+  else { C.vu = true; return voirParis(0); }
+}
+function carteAction(a) {
+  if (a === 'retour') return retourCarte();
+  if (a === 'chercher') { modeHaut('focus'); debutRecherche(); setTimeout(() => $c('carte-q').focus(), 50); return; }
+  if (a === 'moi') { const [x, y] = geo(MOI.lat, MOI.lon); return volerVers(x, y, Math.max(C.s, 2.8), 700); }
+  if (a === 'plus' || a === 'moins') { const z = zone(), px = (z.x0 + z.x1) / 2, py = (z.y0 + z.y1) / 2; return volerVers((px - C.tx) / C.s, (py - C.ty) / C.s, C.s * (a === 'plus' ? 1.7 : 1 / 1.7), 280); }
+  if (a === 'replier') { $c('carte-feuille').classList.toggle('replie'); return outils(); }
+}
+function ouvrirCarte(param) {
+  if (pile.at(-1)?.id === 'carte') return carteEntrer(param);
+  entrer.param = param; onglet('carte');
+}
+addEventListener('resize', () => { if (C.pret && pile.at(-1)?.id === 'carte') { outils(); applique(); } });
 
 /* --- mes bobines --- */
 function filtre(f) {
@@ -1015,7 +1357,14 @@ document.getElementById('app').addEventListener('click', e => {
   if (d.rep !== undefined) return repondre(b);
   if (b.classList.contains('interr')) { b.setAttribute('aria-checked', b.getAttribute('aria-checked') !== 'true'); return; }
   if (d.back !== undefined) return retourner();
+  if (d.carte) return carteAction(d.carte);
+  if (d.lieu) return voirLieu(d.lieu);
+  if (d.arrGo) return voirArr(d.arrGo);
+  if (d.lieuCarte) return ouvrirCarte({ lieu: d.lieuCarte });
   if (d.tabgo) { if (d.tabgo === 'scan') { entrer.param = 'viser'; return aller('scan', 'up'); } return onglet(d.tabgo); }
+  if (d.go === 'spot') return ouvrirCarte({ lieu: 'estrapade' });
+  if (d.go && /^carte-/.test(d.go)) return ouvrirCarte({ arr: d.go.slice(6) });
+  if (d.go && /^lieu-/.test(d.go)) return ouvrirCarte({ lieu: d.go.slice(5) });
   if (d.go) {
     if (b.closest('#tabbar')) { if (d.go === 'scan') { entrer.param = 'viser'; return aller('scan', 'up'); } return onglet(d.go); }
     return aller(d.go, d.tr || 'push');
@@ -1023,7 +1372,7 @@ document.getElementById('app').addEventListener('click', e => {
   if (d.scan) return modeScan(d.scan);
   if (d.pick) return document.getElementById(d.pick === 'camera' ? 'in-camera' : 'in-galerie').click();
   if (d.exemple !== undefined) { S.photo = null; S.score = 82; return aller('apercu', 'fade'); }
-  if (d.bsContinuer !== undefined) { if (S.finLieu) { S.finLieu = false; S.valide = true; pile = [{ id: 'carte', tr: 'fade' }]; return aller('carte-1er', 'fade'); } return onglet('accueil'); }
+  if (d.bsContinuer !== undefined) { S.finLieu = false; return ouvrirCarte({}); }
   if (d.finOnb !== undefined) { S.onb = true; save(); return onglet('accueil'); }
   if (d.toast) return toast(d.toast);
   if (d.copie) { const done = () => toast('Texte copié, colle-le où tu veux.'); try { navigator.clipboard.writeText(d.copie).then(done, () => toast(d.copie)); } catch (er) { toast(d.copie); } return; }
@@ -1033,12 +1382,16 @@ document.getElementById('app').addEventListener('click', e => {
     if (m === 'illisible' || m === 'attente') { entrer.param = m; return aller('scan', 'up'); }
     if (m === 'fin') { S.finLieu = true; return aller('bobine-souvenir', 'up'); }
     if (m === 'arr') return aller('arrondissement', 'up');
+    if (m === 'reset') { try { localStorage.removeItem('bobine-demo'); } catch (er) {} location.hash = ''; return location.reload(); }
   }
 });
 document.getElementById('app').addEventListener('click', e => { const f = e.target.closest('[data-filtre]'); if (f) filtre(f.dataset.filtre); });
+document.getElementById('carte-q').addEventListener('focus', () => debutRecherche());
+document.getElementById('carte-q').addEventListener('input', () => chercher());
+document.getElementById('carte-q').addEventListener('keydown', e => { if (e.key === 'Enter') { const r = document.querySelector('#carte-resultats [data-lieu]'); if (r) voirLieu(r.dataset.lieu); } });
 document.getElementById('f-compte').addEventListener('submit', e => { e.preventDefault(); S.onb = true; save(); onglet('accueil'); });
 
-window.__bobine = { aller, onglet, modeScan, S, filtre };
+window.__bobine = { aller, onglet, modeScan, S, filtre, voirArr, voirLieu, voirParis, ouvrirCarte, C, progres };
 /* ---------- départ ---------- */
 const h = (location.hash || '').slice(1);
 if (h && el(h) && !['chargement', 'apercu', 'bobine-souvenir', 'cassette'].includes(h)) {
